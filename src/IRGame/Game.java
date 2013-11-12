@@ -11,6 +11,7 @@ public class Game extends StateBasedGame{
     public static final String gameName = "Plud";
     public static int width = 640;
     public static int height = width * 9 / 16;
+    public static int frameRate = 60;
     //public static final int gameMenu = 0;
     public static final int gamePlay = 1;
     //public static final int gameOver = 2;
@@ -35,6 +36,7 @@ public class Game extends StateBasedGame{
         try{
             appgc = new AppGameContainer(new Game(gameName));
             appgc.setDisplayMode(width, height, false);
+            appgc.setTargetFrameRate(frameRate);
             appgc.start();
         }catch(SlickException e){
            

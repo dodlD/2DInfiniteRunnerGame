@@ -13,20 +13,20 @@ import org.newdawn.slick.Input;
  */
 public class Keyboard /*implements KeyListener*/{
     
-    public static void check(GameContainer gc){
+    public static void check(GameContainer gc, int delta){
         Input input = gc.getInput();
         
         if(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_W)){    
-            GamePlay.yPos -= 2;
+            GamePlay.yPos -= 2 * delta;
         }
         if(input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_S)){
-            //GamePlay.yPos++;
+            //GamePlay.yPos += 1 * delta;
         }
         if(input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_A)){
-            GamePlay.xPos--;
+            GamePlay.xPos -= 1 * delta;
         }
         if(input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_D)){
-            GamePlay.xPos++;
+            GamePlay.xPos += 1 * delta;
         }
     }
 
