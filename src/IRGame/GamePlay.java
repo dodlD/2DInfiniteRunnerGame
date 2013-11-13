@@ -63,8 +63,14 @@ public class GamePlay extends BasicGameState{
                     horizPixles = 0;
                 }
             }*/
-            if (horizPixles > 40 * (img + 1)){
+            /*if (horizPixles > 40 * (img + 1)){
                 g.drawImage(groundObj[img], Game.width + groundObj[img].getWidth() * img - horizPixles, Game.height - groundObj[img].getHeight());
+                if (horizPixles == 640){horizPixles = 0;}
+            }
+            g.drawImage(groundObj[img], groundObj[img].getWidth() * img - horizPixles, Game.height - groundObj[img].getHeight());
+            *//////////////////////
+            if (horizPixles > 40 * (img + 1)){
+                g.drawImage(groundObj[img], Game.width - horizPixles, Game.height - groundObj[img].getHeight());
             }
             /*if (horizPixles == 0){
                 rObj = 9;//(int)(Math.random() * Game.width / 40);
@@ -74,7 +80,7 @@ public class GamePlay extends BasicGameState{
                 g.drawImage(groundObj[rObj], groundObj[rObj].getWidth() * rObj - horizVel, Game.height - groundObj[rObj].getHeight() * rPos);
                 //g.drawImage(groundImg.get(rObj), groundImg.get(img).getWidth() * rObj - horizPos, Game.height - groundImg.get(img).getHeight() * rPos);
             }else{*/
-            g.drawImage(groundObj[img], groundObj[img].getWidth() * img - horizPixles, Game.height - groundObj[img].getHeight() /** rPos*/);
+            //g.drawImage(groundObj[img], groundObj[img].getWidth() * img - horizPixles, Game.height - groundObj[img].getHeight() /** rPos*/);
                 //g.drawImage(groundImg.get(img), groundImg.get(img).getWidth() * img - horizPos, Game.height - groundImg.get(img).getHeight());
             //}
          
