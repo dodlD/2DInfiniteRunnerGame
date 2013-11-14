@@ -8,8 +8,8 @@ import IRGame.GamePlay;
  */
 public class Collision {
     public static void check(int delta){
-        if (GamePlay.yPos + GamePlay.chaR.getHeight() > Game.height - GamePlay.groundObj[9].getHeight() /** GamePlay.rPos*/){
-            GamePlay.yPos-= 1 * delta;
+        if (GamePlay.charYPos + GamePlay.chaR.getSprite().getHeight() > Game.height - GamePlay.groundObj[9].getHeight()){
+            GamePlay.vertVel-= Gravity.gravity * delta;
         }
     }
 }

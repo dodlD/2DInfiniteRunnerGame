@@ -1,6 +1,7 @@
 package IRGame.Input;
 
 import IRGame.Game;
+import IRGame.Object.Character;
 import IRGame.GamePlay;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
@@ -17,16 +18,20 @@ public class Keyboard /*implements KeyListener*/{
         Input input = gc.getInput();
         
         if(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_W)){    
-            GamePlay.yPos -= 2 * delta;
+            GamePlay.charYPos -= 2 * delta;
+            GamePlay.chaR.setYPos(GamePlay.charYPos);
         }
         if(input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_S)){
-            //GamePlay.yPos += 1 * delta;
+            /*GamePlay.charYPos += 1 * delta;
+            GamePlay.chaR.setYPos(GamePlay.charYPos);*/
         }
         if(input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_A)){
-            GamePlay.xPos -= 1 * delta;
+            GamePlay.charXPos -= 1 * delta;
+            GamePlay.chaR.setXPos(GamePlay.charXPos);
         }
         if(input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_D)){
-            GamePlay.xPos += 1 * delta;
+            GamePlay.charXPos += 1 * delta;
+            GamePlay.chaR.setXPos(GamePlay.charXPos);
         }
     }
 
