@@ -35,7 +35,7 @@ public class Character {
     }
     
     public void setXPos(int xPos){
-        this.xPos = xPos;
+        this.xPos += xPos;
     }
     
     public static int getYPos(){
@@ -43,7 +43,7 @@ public class Character {
     }
     
     public void setYPos(int yPos){
-        this.yPos = yPos;
+        this.yPos += yPos;
     }
     
     public static double getHorizVel(){

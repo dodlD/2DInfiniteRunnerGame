@@ -14,9 +14,9 @@ import org.newdawn.slick.state.*;
  */
 public class GamePlay extends BasicGameState{
     
-    public static int charXPos = 295;
-    public static int charYPos = 125;
-    public static int vertVel;
+    public static int charStartXPos = 295;
+    public static int charStartYPos = 125;
+    public static int vertVel = 1;
     public static int horizVel = 0;
     public static Character chaR;
     
@@ -37,7 +37,7 @@ public class GamePlay extends BasicGameState{
 
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException{
         charSprite = new Image("res/tempChar.jpg");
-        chaR = new Character(charSprite, charXPos, charYPos);
+        chaR = new Character(charSprite, charStartXPos, charStartYPos);
         for(int i = 0; i < Game.width / 40 + 1; i++){
             groundObj[i] = new Image("res/tempGround.jpg");
         }
@@ -45,20 +45,20 @@ public class GamePlay extends BasicGameState{
     }
     
     public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException{
-        g.drawImage(Character.getSprite(), chaR.getXPos(), chaR.getYPos());
-        for (int img = 0; img < Game.width / 40 + 1; img++){
-                g.drawImage(groundObj[img], Game.width + groundObj[img].getWidth() * (img+1) - horizVel, Game.height - groundObj[img].getHeight());
+        g.drawImage(chaR.getSprite(), chaR.getXPos(), chaR.getYPos());
+        /*for (int img = 0; img < Game.width / 40 + 1; img++){
+            g.drawImage(groundObj[img], Game.width + groundObj[img].getWidth() * (img+1) - horizVel, Game.height - groundObj[img].getHeight());
                 
           
          
-        }   
+        }*/   
     }
 
     public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException{     
-        vertVel += Gravity.gravity * delta;
-        horizVel += (int)chaR.getHorizVel() * delta;
+        chaR.setYPos(vertVel * delta);
+        /*horizVel =  1 * delta;
         Collision.check(delta);
-        Keyboard.check(gc, delta);
+        Keyboard.check(gc, delta);*/
         
         
         
