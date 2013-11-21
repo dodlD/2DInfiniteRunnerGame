@@ -22,10 +22,10 @@ public class Keyboard /*implements KeyListener*/{
         int moveRight;
         
         if(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_W)){    
-            GamePlay.chaR.setYPos(-1 * delta);
+            GamePlay.chaR.setYPos(-2 * delta);
         }
         if(input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_S)){
-            GamePlay.chaR.setYPos(1 * delta);
+            //GamePlay.chaR.setYPos(1 * delta);
         }
         if(input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_A)){
             
