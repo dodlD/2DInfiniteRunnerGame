@@ -4,30 +4,31 @@
  */
 package IRGame.Object;
 
+import IRGame.Graphics.Sprite;
+import IRGame.Graphics.SpriteSheet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
 /**
  *
  * @author lkpit11dljo
  */
 public class Character {
-    private static Image sprite;
     private static int xPos;
     private static int yPos;
     private static double horizVel = 1.0;
+    private static final SpriteSheet chaR = new SpriteSheet("/textures/tempCharSpriteSheet.jpg");
+    private static final Sprite head = new Sprite(32, 0, 0, chaR);
+    private static final Sprite body = new Sprite(32, 1, 0, chaR);
     
     
-    public Character(Image sprite, int xPos, int yPos){
-        this.sprite = sprite;
-        this.xPos = xPos;
-        this.yPos = yPos;
+    public Character(int StartXPos, int StartYPos){
+        this.xPos = StartXPos;
+        this.yPos = StartYPos;
     }
     
-    public static Image getSprite(){
-        return sprite;
+    public static Sprite getSprite(){
+        return head;
     }
     
     public static int getXPos(){

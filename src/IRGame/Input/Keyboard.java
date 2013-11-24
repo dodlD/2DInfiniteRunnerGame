@@ -2,9 +2,8 @@ package IRGame.Input;
 
 import IRGame.Game;
 import IRGame.Object.Character;
-import IRGame.GamePlay;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 //import org.newdawn.slick.KeyListener;
 
 
@@ -12,14 +11,10 @@ import org.newdawn.slick.Input;
  *
  * @author Daniel
  */
-public class Keyboard /*implements KeyListener*/{
+public class Keyboard implements KeyListener{
     
-    public static void check(GameContainer gc, int delta){
+    /*public static void check(GameContainer gc, int delta){
         Input input = gc.getInput();
-        int moveUp;
-        int moveDown;
-        int moveLeft;
-        int moveRight;
         
         if(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_W)){    
             GamePlay.chaR.setYPos(-2 * delta);
@@ -34,46 +29,27 @@ public class Keyboard /*implements KeyListener*/{
         if(input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_D)){   
             GamePlay.chaR.setXPos(1 * delta);
         }
-    }
-
-    /*public void keyPressed(int keyCode, char c) {
-        keyCode.getKeyCode();
-        switch( keyCode ) { 
-            case KeyEvent.VK_UP | KeyEvent.VK_W:
-                keyUp = true; 
-                break;
-            case KeyEvent.VK_DOWN | KeyEvent.VK_S:
-                keyDown = true; 
-                break;
-            case KeyEvent.VK_LEFT | KeyEvent.VK_A:
-                keyLeft = true;
-                break;
-            case KeyEvent.VK_RIGHT | KeyEvent.VK_D:
-                keyRight = true;
-                break;
-         }
-    }
-
-    public void keyReleased(int key, char c) {
-        
-    }
-
-    public void setInput(Input input) {
-
-    }
-
-    public boolean isAcceptingInput() {
-        return false;
-    }
-
-    public void inputEnded() {
-
-    }
-
-    public void inputStarted() {
-
     }*/
+    
+    private boolean[] keys = new boolean[120];
+    public boolean up, down, left, right;
+    
+    public void update(){
+        up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
+        down = keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];
+        left = keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A];
+        right = keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];
+    }
+    
+    public void keyPressed(KeyEvent e) {
+        keys[e.getKeyCode()] = true;
+    }
 
+    public void keyReleased(KeyEvent e) {
+        keys[e.getKeyCode()] = false;
+    }
     
-    
+    public void keyTyped(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
