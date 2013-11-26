@@ -1,17 +1,16 @@
 package irgame.physics;
 
-/*package IRGame.Physics;
-import IRGame.Game;
+import irgame.Game;
+import irgame.object.Character;
 
-
-/**
+/*
  *
  * @author Daniel Johansson
  */
-/*public class Collision {
-    public static void check(int delta){
-        if (GamePlay.chaR.getYPos() + GamePlay.chaR.getSprite().getHeight() > Game.HEIGHT - GamePlay.groundObj[5].getHeight()){
-            GamePlay.chaR.setYPos(-1 * delta);
+public class Collision {
+    public static void update(){
+        if (Game.chaR.getYPos() + Game.chaR.getSIZE() * 2 > Game.HEIGHT - Game.ground.SIZE){
+            Game.chaR.delYPos(Game.gravity);
         }
     }
-}*/
+}

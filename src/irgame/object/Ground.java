@@ -14,7 +14,7 @@ import java.awt.Image;
 public class Ground {
     //private static double velocity;
     //private static double friction/*Koeffisient*/; //Friction koeffisient? for the current underlag
-    private final int SIZE = 32;
+    public final int SIZE = 32;
     private static int spriteXPos;
     private static int spriteYPos;
     private static SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempGroundSpriteSheet.png");

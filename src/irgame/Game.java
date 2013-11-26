@@ -2,6 +2,8 @@ package irgame;
 
 import irgame.input.Keyboard;
 import irgame.object.Ground;
+import irgame.physics.Collision;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,8 +18,8 @@ public class Game extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
     
     private static final String GAMETITLE = "Plud";
-    public final int WIDTH = 640;
-    public final int HEIGHT = WIDTH * 9 / 16;
+    public static final int WIDTH = 640;
+    public static final int HEIGHT = WIDTH * 9 / 16;
     // public static int scale = 3;
     
     private Thread thread;
@@ -30,8 +32,10 @@ public class Game extends Canvas implements Runnable {
     //private BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
     
-    private Ground ground;
-    private irgame.object.Character chaR;
+    public static final int gravity = 1;
+    
+    public static Ground ground;
+    public static irgame.object.Character chaR;
     
     //private Image ground;
     
@@ -71,7 +75,8 @@ public class Game extends Canvas implements Runnable {
         int updates = 0;
         
         ground = new Ground(0, 0);
-        chaR = new irgame.object.Character(295, 125);
+        //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
+        chaR = new irgame.object.Character(288 , 148);
         
         while(running) {
             long now = System.nanoTime();
@@ -96,14 +101,17 @@ public class Game extends Canvas implements Runnable {
         }
     }
     
-    public void update() {
-        if(key.up){}
-        if(key.down){}
-        if(key.left){chaR.addXPos(1);}
-        if(key.right){chaR.remXPos(1);}
+    public void update(){
+        chaR.addYPos(gravity);
+        Collision.update();
+        key.update();
+        if(key.up){chaR.delYPos(5);}
+        if (key.down){chaR.addYPos(5);}
+        if (key.left){chaR.delXPos(5);}
+        if (key.right){chaR.addXPos(5);}
     }
     
-    public void render() {
+    public void render(){
         BufferStrategy bs = getBufferStrategy();
         if (bs == null) {
             createBufferStrategy(3);
@@ -120,8 +128,8 @@ public class Game extends Canvas implements Runnable {
         }
         
         //Character rendering
-        g.drawImage(chaR.getBodySprite(), chaR.getXPos(), getHeight() - 64, null);
-        g.drawImage(chaR.getHeadSprite(), chaR.getXPos(), getHeight() - 96, null);
+        g.drawImage(chaR.getBodySprite(), chaR.getXPos(), chaR.getYPos() + chaR.getSIZE(), null);
+        g.drawImage(chaR.getHeadSprite(), chaR.getXPos(), chaR.getYPos(), null);
         
         g.dispose();
         bs.show();
