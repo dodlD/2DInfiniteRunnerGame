@@ -29,7 +29,7 @@ public class SpriteSheet {
     private void load(){
         try {
             //img = ImageIO.read(SpriteSheet.class.getResource(path));
-            img = ImageIO.read(SpriteSheet.class.getResource(path));
+            img = ImageIO.read(getClass().getResource(path));
         } catch (IOException ex) {
             System.out.println(getClass().getResource(path));
             Logger.getLogger(SpriteSheet.class.getName()).log(Level.SEVERE, null, ex);

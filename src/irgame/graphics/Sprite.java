@@ -4,13 +4,14 @@
  */
 package irgame.graphics;
 
+import irgame.graphics.SpriteSheet;
 import java.awt.Image;
 
 /**
  *
  * @author Daniel
  */
-public class Sprite {
+public class Sprite{
     private final int SIZE;
     private int x, y;
     private SpriteSheet sheet;

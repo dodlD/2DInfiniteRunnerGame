@@ -1,6 +1,5 @@
 package irgame;
 
-
 import irgame.input.Keyboard;
 import irgame.object.Ground;
 import java.awt.Canvas;
@@ -10,7 +9,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
 
-
 /**
  * @author Daniel Johansson
  */
@@ -18,9 +16,9 @@ public class Game extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
     
     private static final String GAMETITLE = "Plud";
-    public static final int WIDTH = 640;
-    public static final int HEIGHT = WIDTH * 9 / 16;
-   // public static int scale = 3;
+    public final int WIDTH = 640;
+    public final int HEIGHT = WIDTH * 9 / 16;
+    // public static int scale = 3;
     
     private Thread thread;
     private JFrame frame;
@@ -33,6 +31,8 @@ public class Game extends Canvas implements Runnable {
     //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
     
     private Ground ground;
+    private irgame.object.Character chaR;
+    
     //private Image ground;
     
     public Game(){
@@ -71,7 +71,7 @@ public class Game extends Canvas implements Runnable {
         int updates = 0;
         
         ground = new Ground(0, 0);
-        //Character chaR = new Character(295, 125);
+        chaR = new irgame.object.Character(295, 125);
         
         while(running) {
             long now = System.nanoTime();
@@ -99,8 +99,8 @@ public class Game extends Canvas implements Runnable {
     public void update() {
         if(key.up){}
         if(key.down){}
-        if(key.left){}
-        if(key.right){}
+        if(key.left){chaR.addXPos(1);}
+        if(key.right){chaR.remXPos(1);}
     }
     
     public void render() {
@@ -120,7 +120,8 @@ public class Game extends Canvas implements Runnable {
         }
         
         //Character rendering
-        
+        g.drawImage(chaR.getBodySprite(), chaR.getXPos(), getHeight() - 64, null);
+        g.drawImage(chaR.getHeadSprite(), chaR.getXPos(), getHeight() - 96, null);
         
         g.dispose();
         bs.show();

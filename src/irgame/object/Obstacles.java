@@ -8,7 +8,7 @@ package irgame.object;
  *
  * @author lkpit11dljo
  */
-public class Obstacles {
+public class Obstacles{
     private static int width;
     private static int height;
     
