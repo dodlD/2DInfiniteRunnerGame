@@ -14,7 +14,8 @@ import java.awt.Image;
 public class Character{
     private int xPos;
     private int yPos;
-    private static int horizVel = 1;
+    private static int HORIZ_VEL = 1;
+    private final int JUMP_FORCE = SIZE; //The force of a characters jump measured in pixels
     private final int SIZE = 32;
     private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempCharSpriteSheet.png");
     private final Image HEAD = sheet.img.getSubimage(0, 0, SIZE, SIZE);
@@ -35,7 +36,7 @@ public class Character{
         this.xPos += xPos;
     }
     
-    public void delXPos(int xPos){
+    public void subXPos(int xPos){
         this.xPos -= xPos;
     }
     
@@ -47,7 +48,7 @@ public class Character{
         this.yPos += yPos;
     }
     
-    public void delYPos(int yPos){
+    public void subYPos(int yPos){
         this.yPos -= yPos;
     }
     

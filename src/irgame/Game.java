@@ -105,9 +105,9 @@ public class Game extends Canvas implements Runnable {
         chaR.addYPos(gravity);
         Collision.update();
         key.update();
-        if(key.up){chaR.delYPos(5);}
+        if(key.up){chaR.subYPos();}
         if (key.down){chaR.addYPos(5);}
-        if (key.left){chaR.delXPos(5);}
+        if (key.left){chaR.subXPos(5);}
         if (key.right){chaR.addXPos(5);}
     }
     
