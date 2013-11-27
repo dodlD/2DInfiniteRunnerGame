@@ -11,7 +11,7 @@ import java.awt.Image;
  *
  * @author lkpit11dljo
  */
-public class Ground {
+public class Ground{
     //private static double velocity;
     //private static double friction/*Koeffisient*/; //Friction koeffisient? for the current underlag
     public final int SIZE = 32;

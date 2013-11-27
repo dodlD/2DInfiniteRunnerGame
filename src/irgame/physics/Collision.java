@@ -10,7 +10,8 @@ import irgame.object.Character;
 public class Collision {
     public static void update(){
         if (Game.chaR.getYPos() + Game.chaR.getSIZE() * 2 > Game.HEIGHT - Game.ground.SIZE){
-            Game.chaR.delYPos(Game.gravity);
+            Game.chaR.subYPos(Game.gravity);
+            standing = true;
         }
     }
 }
