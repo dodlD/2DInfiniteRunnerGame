@@ -77,7 +77,7 @@ public class Game extends Canvas implements Runnable {
         
         //ground = new Ground(0, 0);
         for (int i = 0; i < WIDTH / 32 + 1; i++){
-            ground[i] = new Ground(0, 0); //ground.getImg(), 32 * i - ground.getXPos(), getHeight() - 32, null);
+            ground[i] = new Ground(0, 0, 32 * i); //ground.getImg(), 32 * i - ground.getXPos(), getHeight() - 32, null);
         }
         //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
         chaR = new irgame.object.Character();
@@ -106,21 +106,24 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void update(){
-        chaR.addYPos(gravity);
-        for (int i = 0; i < WIDTH / 32 + 1; i++){
+        chaR.yPos += gravity;
+        /*for (int i = 0; i < WIDTH / 32 + 1; i++){
             ground[i].setXPos(chaR.getHORIZ_VEL());
             //System.out.println(ground[i].getXPos());
-        }
+            System.out.println(i + " " + ground[i].getXPos());
+        }*/
+        //System.out.println(ground[0].getXPos());
+        
         Collision.update();
         key.update();
         if (key.up){
-            if (chaR.getState().equals("standing")){
-                chaR.subYPos(chaR.getJumpForce());
+            if (chaR.state.equals("standing")){
+                chaR.yPos -= chaR.JUMP_FORCE;
             }
         }
-        //if (key.down){chaR.addYPos(5);}
-        if (key.left){chaR.subXPos(chaR.getHORIZ_VEL());}
-        if (key.right){chaR.addXPos(chaR.getHORIZ_VEL());}
+        //if (key.down){}
+        if (key.left){chaR.xPos -= chaR.HORIZ_VEL;}
+        if (key.right){chaR.xPos += chaR.HORIZ_VEL;}
     }
     
     public void render(){
@@ -135,16 +138,17 @@ public class Game extends Canvas implements Runnable {
         g.fillRect(0, 0, getWidth(), getHeight());
         
         //Ground rendering
+       
         for (int i = 0; i < WIDTH / 32 + 1; i++){
-            System.out.println(ground[i].getXPos());
-            g.drawImage(ground[i].getImg(), 32 * i /*- ground[i].getXPos()*/, getHeight() - ground[i].getSIZE(), null);
+            //System.out.println(ground[i].getXPos());
+            g.drawImage(ground[i].getImg(), ground[i].getXPos(), getHeight() - ground[i].getSIZE(), null);
         }
         
         
         
         //Character rendering
-        g.drawImage(chaR.getBodySprite(), chaR.getXPos(), chaR.getYPos() + chaR.getSIZE(), null);
-        g.drawImage(chaR.getHeadSprite(), chaR.getXPos(), chaR.getYPos(), null);
+        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SIZE, null);
+        g.drawImage(chaR.HEAD, chaR.xPos, chaR.yPos, null);
         
         
         
