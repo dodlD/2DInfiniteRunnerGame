@@ -32,9 +32,10 @@ public class Game extends Canvas implements Runnable {
     //private BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
     
-    public static final int gravity = 1;
+    public static final int gravity = 2;
     
-    public static Ground ground;
+    //public static Ground ground;
+    public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static irgame.object.Character chaR;
     
     //private Image ground;
@@ -74,9 +75,12 @@ public class Game extends Canvas implements Runnable {
         int frames = 0;
         int updates = 0;
         
-        ground = new Ground(0, 0);
+        //ground = new Ground(0, 0);
+        for (int i = 0; i < WIDTH / 32 + 1; i++){
+            ground[i] = new Ground(0, 0); //ground.getImg(), 32 * i - ground.getXPos(), getHeight() - 32, null);
+        }
         //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
-        chaR = new irgame.object.Character(288 , 148);
+        chaR = new irgame.object.Character();
         
         while(running) {
             long now = System.nanoTime();
@@ -103,17 +107,20 @@ public class Game extends Canvas implements Runnable {
     
     public void update(){
         chaR.addYPos(gravity);
+        for (int i = 0; i < WIDTH / 32 + 1; i++){
+            ground[i].setXPos(chaR.getHORIZ_VEL());
+            //System.out.println(ground[i].getXPos());
+        }
         Collision.update();
         key.update();
         if (key.up){
-            if (standing){
-                
+            if (chaR.getState().equals("standing")){
                 chaR.subYPos(chaR.getJumpForce());
             }
         }
         //if (key.down){chaR.addYPos(5);}
-        if (key.left){chaR.subXPos(chaR.getHorizVel());}
-        if (key.right){chaR.addXPos(chaR.getHorizVel());}
+        if (key.left){chaR.subXPos(chaR.getHORIZ_VEL());}
+        if (key.right){chaR.addXPos(chaR.getHORIZ_VEL());}
     }
     
     public void render(){
@@ -128,13 +135,18 @@ public class Game extends Canvas implements Runnable {
         g.fillRect(0, 0, getWidth(), getHeight());
         
         //Ground rendering
-        for(int i = 0; i < WIDTH / 32; i++){
-            g.drawImage(ground.getImg(), 32 * i, getHeight() - 32, null);
+        for (int i = 0; i < WIDTH / 32 + 1; i++){
+            System.out.println(ground[i].getXPos());
+            g.drawImage(ground[i].getImg(), 32 * i /*- ground[i].getXPos()*/, getHeight() - ground[i].getSIZE(), null);
         }
+        
+        
         
         //Character rendering
         g.drawImage(chaR.getBodySprite(), chaR.getXPos(), chaR.getYPos() + chaR.getSIZE(), null);
         g.drawImage(chaR.getHeadSprite(), chaR.getXPos(), chaR.getYPos(), null);
+        
+        
         
         g.dispose();
         bs.show();

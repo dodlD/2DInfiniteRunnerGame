@@ -9,9 +9,11 @@ import irgame.object.Character;
  */
 public class Collision {
     public static void update(){
-        if (Game.chaR.getYPos() + Game.chaR.getSIZE() * 2 > Game.HEIGHT - Game.ground.SIZE){
+        if (Game.chaR.getYPos() + Game.chaR.getSIZE() * 2 > Game.HEIGHT - Game.ground[9].getSIZE()){
             Game.chaR.subYPos(Game.gravity);
-            standing = true;
+            Game.chaR.setState("standing");
+        }else{
+            Game.chaR.setState("falling");
         }
     }
 }

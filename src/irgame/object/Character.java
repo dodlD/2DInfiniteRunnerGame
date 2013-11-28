@@ -4,6 +4,7 @@
  */
 package irgame.object;
 
+import irgame.Game;
 import irgame.graphics.SpriteSheet;
 import java.awt.Image;
 
@@ -12,21 +13,23 @@ import java.awt.Image;
  * @author lkpit11dljo
  */
 public class Character{
-    private int xPos;
-    private int yPos;
-    private static boolean standing;
-    private final int HORIZ_VEL = 5;
-    private final int JUMP_FORCE = 32; //The force of a characters jump measured in pixels
     private final int SIZE = 32;
     private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempCharSpriteSheet.png");
     private final Image HEAD = sheet.img.getSubimage(0, 0, SIZE, SIZE);
     private final Image BODY = sheet.img.getSubimage(32, 0, SIZE, SIZE);
+    private int xPos;
+    private int yPos;
+    private int StartXPos = Game.WIDTH / 2 - Ground.getSIZE();
+    private static int StartYPos = Game.HEIGHT - Ground.getSIZE()*3;
+    private final int HORIZ_VEL = 5;
+    private final int JUMP_FORCE = 32; //The force of a characters jump measured in pixels
+    private String state;
     
     
     
-    public Character(int StartXPos, int StartYPos){
-        this.xPos = StartXPos;
-        this.yPos = StartYPos;
+    public Character(){
+        xPos = StartXPos;
+        yPos = StartYPos;
     }
     
     public int getXPos(){
@@ -53,12 +56,20 @@ public class Character{
         this.yPos -= yPos;
     }
     
-    public final int getHorizVel(){
+    public final int getHORIZ_VEL(){
         return HORIZ_VEL;
     }
     
     public final int getJumpForce(){
         return JUMP_FORCE;
+    }
+    
+    public String getState(){
+        return state;
+    }
+    
+    public void setState(String state){
+        this.state = state;
     }
     
     public final int getSIZE(){

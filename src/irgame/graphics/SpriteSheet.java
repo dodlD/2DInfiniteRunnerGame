@@ -17,7 +17,6 @@ import javax.imageio.ImageIO;
 public class SpriteSheet {
 
     private String path;
-    //private final int SIZE;
     public BufferedImage img;
     
     public SpriteSheet(String path/*, int size*/){
