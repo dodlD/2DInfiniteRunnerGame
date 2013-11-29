@@ -1,6 +1,7 @@
 package irgame;
 
 import irgame.input.Keyboard;
+import irgame.object.Character;
 import irgame.object.Ground;
 import irgame.physics.Collision;
 
@@ -32,11 +33,11 @@ public class Game extends Canvas implements Runnable {
     //private BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
     
-    public static final int gravity = 2;
+    public static int gravity = 2;
     
     //public static Ground ground;
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
-    public static irgame.object.Character chaR;
+    public static Character chaR;
     
     //private Image ground;
     
@@ -76,8 +77,15 @@ public class Game extends Canvas implements Runnable {
         int updates = 0;
         
         //ground = new Ground(0, 0);
-        for (int i = 0; i < WIDTH / 32 + 1; i++){
-            ground[i] = new Ground(0, 0, 32 * i); //ground.getImg(), 32 * i - ground.getXPos(), getHeight() - 32, null);
+        for (int i = 0; i < ground.length; i++){
+            /*int r = (int)(Math.random() * 3 + 1);
+            System.out.println(r);*/
+            if(i == 16){
+                ground[i] = new Ground(0, 0, i, 2);
+            }else{
+                ground[i] = new Ground(0, 0, i, 1);
+            }
+            
         }
         //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
         chaR = new irgame.object.Character();
@@ -106,19 +114,28 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void update(){
+        int jump = 0;
         chaR.yPos += gravity;
-        /*for (int i = 0; i < WIDTH / 32 + 1; i++){
-            ground[i].setXPos(chaR.getHORIZ_VEL());
-            //System.out.println(ground[i].getXPos());
-            System.out.println(i + " " + ground[i].getXPos());
-        }*/
-        //System.out.println(ground[0].getXPos());
+        for (int i = 0; i < ground.length; i++){
+            if (ground[i].xPos <= -ground[i].SIZE){
+                ground[i].xPos += getWidth() + ground[i].SIZE;
+            }
+            ground[i].xPos -= chaR.HORIZ_VEL;
+        }
         
         Collision.update();
         key.update();
         if (key.up){
             if (chaR.state.equals("standing")){
-                chaR.yPos -= chaR.JUMP_FORCE;
+                gravity = 0;
+                for (;jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE; jump++){
+                    chaR.yPos -= chaR.JUMP_FORCE;
+                    break;
+                }
+                if (chaR.yPos ==  * jump){
+                    gravity = 2;
+                }
+                
             }
         }
         //if (key.down){}
@@ -138,19 +155,13 @@ public class Game extends Canvas implements Runnable {
         g.fillRect(0, 0, getWidth(), getHeight());
         
         //Ground rendering
-       
-        for (int i = 0; i < WIDTH / 32 + 1; i++){
-            //System.out.println(ground[i].getXPos());
-            g.drawImage(ground[i].getImg(), ground[i].getXPos(), getHeight() - ground[i].getSIZE(), null);
+        for (int i = 0; i < ground.length; i++){
+            g.drawImage(ground[i].sprite, ground[i].xPos, ground[i].yPos, null);
         }
-        
-        
         
         //Character rendering
         g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SIZE, null);
         g.drawImage(chaR.HEAD, chaR.xPos, chaR.yPos, null);
-        
-        
         
         g.dispose();
         bs.show();

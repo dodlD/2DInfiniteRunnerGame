@@ -21,7 +21,6 @@ public class SpriteSheet {
     
     public SpriteSheet(String path/*, int size*/){
         this.path = path;
-        //SIZE = size;
         load();
     }
     

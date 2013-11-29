@@ -4,6 +4,7 @@
  */
 package irgame.object;
 
+import irgame.Game;
 import irgame.graphics.SpriteSheet;
 import java.awt.Image;
 
@@ -14,34 +15,19 @@ import java.awt.Image;
 public class Ground{
     //private static double velocity;
     //private static double friction/*Koeffisient*/; //Friction koeffisient? for the current underlag
-    private static int xPos;
-    private static int yPos;
-    private static final int SIZE = 32;
-    private static int spriteXPos;
-    private static int spriteYPos;
+    public static final int SIZE = 32;
     private static SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempGroundSpriteSheet.png");
-    private static Image img;
+    public static Image sprite;
+    private int spriteXPos;
+    private int spriteYPos;
+    public int xPos;
+    public int yPos;
     
-    public Ground(int spriteXPos, int spriteYPos, int startXPos){
+    public Ground(int spriteXPos, int spriteYPos, int startXPos, int startYPos){
         this.spriteXPos = spriteXPos * SIZE;
         this.spriteYPos = spriteYPos * SIZE;
-        img = sheet.img.getSubimage(spriteXPos, spriteYPos, SIZE, SIZE);
-        this.xPos = xPos;
-    }
-    
-    public Image getImg(){
-        return img;
-    }
-    
-    public static int getXPos(){
-        return xPos;
-    }
-    
-    public void setXPos(int xPos){
-        this.xPos += xPos;   
-    }
-    
-    public static final int getSIZE(){
-        return SIZE;
+        sprite = sheet.img.getSubimage(spriteXPos, spriteYPos, SIZE, SIZE);
+        xPos = startXPos * SIZE;
+        yPos = Game.HEIGHT - startYPos * SIZE;
     }
 }

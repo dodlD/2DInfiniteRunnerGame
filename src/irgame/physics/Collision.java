@@ -9,7 +9,16 @@ import irgame.object.Character;
  */
 public class Collision {
     public static void update(){
-        if (Game.chaR.yPos + Game.chaR.SIZE * 2 > Game.HEIGHT - Game.ground[9].getSIZE()){
+        /*for (int i = 0; i < Game.ground.length; i++){
+            //Object sides
+            if (Game.chaR.yPos < Game.ground[i].yPos && Game.chaR.xPos > Game.ground[i].xPos){
+                Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+            }    
+        }*/
+        
+        
+        
+        if (Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[9].yPos){
             Game.chaR.yPos -= Game.gravity;
             Game.chaR.state = "standing";
         }else{
