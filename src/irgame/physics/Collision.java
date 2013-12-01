@@ -17,12 +17,13 @@ public class Collision {
         }*/
         
         
-        
-        if (Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[9].yPos){
-            Game.chaR.yPos -= Game.gravity;
-            Game.chaR.state = "standing";
-        }else{
-            Game.chaR.state = "falling";
+        if (!Game.chaR.state.equals("jumping")){
+            if (Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[9].yPos){
+                Game.chaR.yPos -= Game.gravity;
+                Game.chaR.state = "standing";
+            }else{
+                Game.chaR.state = "falling";
+            }
         }
     }
 }

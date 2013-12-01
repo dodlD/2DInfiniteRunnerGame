@@ -39,6 +39,7 @@ public class Game extends Canvas implements Runnable {
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static Character chaR;
     
+    private int jump = 0;
     //private Image ground;
     
     public Game(){
@@ -90,6 +91,7 @@ public class Game extends Canvas implements Runnable {
         //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
         chaR = new irgame.object.Character();
         
+        
         while(running) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
@@ -114,7 +116,7 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void update(){
-        int jump = 0;
+        
         chaR.yPos += gravity;
         for (int i = 0; i < ground.length; i++){
             if (ground[i].xPos <= -ground[i].SIZE){
@@ -126,15 +128,22 @@ public class Game extends Canvas implements Runnable {
         Collision.update();
         key.update();
         if (key.up){
-            if (chaR.state.equals("standing")){
+            System.out.println(chaR.state);
+            if (chaR.state.equals("standing") || chaR.state.equals("jumping")){
                 gravity = 0;
-                for (;jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE; jump++){
+                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){
                     chaR.yPos -= chaR.JUMP_FORCE;
-                    break;
+                    jump++;
+                    System.out.println("gravity: " + gravity + ", jump: " + jump);
                 }
-                if (chaR.yPos ==  * jump){
+                if (jump == 7){
                     gravity = 2;
+                    jump = 0;
+                    chaR.state = "falling";
+                }else{
+                    chaR.state = "jumping";
                 }
+                System.out.println("gravity: " + gravity);
                 
             }
         }

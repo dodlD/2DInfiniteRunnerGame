@@ -25,7 +25,7 @@ public class Character{
     public int HORIZ_VEL = 2;
     public final int JUMP_FORCE = 4; //The force of a characters jump measured in pixels
     public final int JUMP_HEIGHT = 32;
-    public String state;
+    public String state = "falling";
 
     public Character(){
     }
