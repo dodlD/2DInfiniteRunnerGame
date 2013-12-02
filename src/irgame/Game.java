@@ -127,7 +127,7 @@ public class Game extends Canvas implements Runnable {
         
         Collision.update();
         key.update();
-        if (key.up){
+        if (key.up || chaR.state.equals("jumping")){
             System.out.println(chaR.state);
             if (chaR.state.equals("standing") || chaR.state.equals("jumping")){
                 gravity = 0;
