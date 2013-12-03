@@ -33,7 +33,7 @@ public class Game extends Canvas implements Runnable {
     //private BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
     
-    public static int gravity = 2;
+    public static int gravity = 4;
     
     //public static Ground ground;
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
@@ -128,21 +128,27 @@ public class Game extends Canvas implements Runnable {
         Collision.update();
         key.update();
         if (key.up || chaR.state.equals("jumping")){
-            System.out.println(chaR.state);
+            //System.out.println(chaR.state);
             if (chaR.state.equals("standing") || chaR.state.equals("jumping")){
                 gravity = 0;
                 if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){
                     chaR.yPos -= chaR.JUMP_FORCE;
+                    chaR.state = "jumping";
                     jump++;
-                    System.out.println("gravity: " + gravity + ", jump: " + jump);
+                    //System.out.println("gravity: " + gravity + ", jump: " + jump);
+                    System.out.println(getHeight() - chaR.yPos);
+                } else{
+                    gravity = 4;
+                    jump = 0;
+                    chaR.state = "falling";
                 }
-                if (jump == 7){
+                /*if (jump == chaR.JUMP_HEIGHT / chaR.JUMP_FORCE - 1){
                     gravity = 2;
                     jump = 0;
                     chaR.state = "falling";
                 }else{
                     chaR.state = "jumping";
-                }
+                }*/
                 System.out.println("gravity: " + gravity);
                 
             }
