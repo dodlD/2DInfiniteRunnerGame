@@ -81,7 +81,7 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < ground.length; i++){
             /*int r = (int)(Math.random() * 3 + 1);
             System.out.println(r);*/
-            if(i == 16){
+            if(i == 9){
                 ground[i] = new Ground(0, 0, i, 2);
             }else{
                 ground[i] = new Ground(0, 0, i, 1);
@@ -125,37 +125,26 @@ public class Game extends Canvas implements Runnable {
             ground[i].xPos -= chaR.HORIZ_VEL;
         }
         
-        Collision.update();
         key.update();
-        if (key.up || chaR.state.equals("jumping")){
-            //System.out.println(chaR.state);
-            if (chaR.state.equals("standing") || chaR.state.equals("jumping")){
+        if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
+            if (chaR.state.equals("standing") || chaR.state.equals("jumping")){ //If the character is standing or jumping
                 gravity = 0;
-                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){
+                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
                     chaR.yPos -= chaR.JUMP_FORCE;
                     chaR.state = "jumping";
                     jump++;
-                    //System.out.println("gravity: " + gravity + ", jump: " + jump);
-                    System.out.println(getHeight() - chaR.yPos);
+                    //System.out.println(getHeight() - chaR.yPos);
                 } else{
                     gravity = 4;
                     jump = 0;
                     chaR.state = "falling";
                 }
-                /*if (jump == chaR.JUMP_HEIGHT / chaR.JUMP_FORCE - 1){
-                    gravity = 2;
-                    jump = 0;
-                    chaR.state = "falling";
-                }else{
-                    chaR.state = "jumping";
-                }*/
-                System.out.println("gravity: " + gravity);
-                
             }
         }
         //if (key.down){}
         if (key.left){chaR.xPos -= chaR.HORIZ_VEL;}
         if (key.right){chaR.xPos += chaR.HORIZ_VEL;}
+        Collision.update();
     }
     
     public void render(){
