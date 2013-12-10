@@ -20,9 +20,9 @@ public class Collision {
         
         if (!Game.chaR.state.equals("jumping")){
             for (int i = 0; i < Game.ground.length; i++){
-                if (Game.ground[i].xPos <= 320 && Game.ground[i].xPos >= 288){
+                if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[i].xPos){
                     groundObj = i;
-                    System.out.println("groundObj: " + groundObj + ", xPos: " + Game.ground[groundObj].xPos);
+                    System.out.println("groundObj: " + groundObj + ", xPos: " + Game.ground[groundObj].xPos + ", yPos: " + Game.ground[groundObj].yPos);
                 }
             }
             

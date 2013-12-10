@@ -118,12 +118,12 @@ public class Game extends Canvas implements Runnable {
     public void update(){
         
         chaR.yPos += gravity;
-        for (int i = 0; i < ground.length; i++){
+        /*for (int i = 0; i < ground.length; i++){
             if (ground[i].xPos <= -ground[i].SIZE){
                 ground[i].xPos += getWidth() + ground[i].SIZE;
             }
             ground[i].xPos -= chaR.HORIZ_VEL;
-        }
+        }*/
         
         key.update();
         if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
@@ -164,7 +164,7 @@ public class Game extends Canvas implements Runnable {
         }
         
         //Character rendering
-        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SIZE, null);
+        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SPRITE_SIZE, null);
         g.drawImage(chaR.HEAD, chaR.xPos, chaR.yPos, null);
         
         g.dispose();
