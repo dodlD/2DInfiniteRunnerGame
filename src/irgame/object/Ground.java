@@ -17,6 +17,7 @@ public class Ground{
     //private static double friction/*Koeffisient*/; //Friction koeffisient? for the current underlag
     public static final int SPRITE_SIZE = 32;
     public final int WIDTH = SPRITE_SIZE;
+    public final int HEIGHT = SPRITE_SIZE;
     private static SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempGroundSpriteSheet.png");
     public static Image sprite;
     private int spriteXPos;
