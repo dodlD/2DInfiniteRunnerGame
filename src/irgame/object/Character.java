@@ -26,7 +26,7 @@ public class Character{
     public int yPos = START_Y_POS;
     public int HORIZ_VEL = 2;
     public final int JUMP_FORCE = 4; //The force of a characters jump measured in pixels
-    public final int JUMP_HEIGHT = 32;
+    public final int JUMP_HEIGHT = 64;
     public String state = "standing";
 
     public Character(){

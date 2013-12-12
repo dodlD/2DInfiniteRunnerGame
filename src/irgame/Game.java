@@ -133,7 +133,6 @@ public class Game extends Canvas implements Runnable {
                     chaR.yPos -= chaR.JUMP_FORCE;
                     chaR.state = "jumping";
                     jump++;
-                    //System.out.println(getHeight() - chaR.yPos);
                 } else{
                     gravity = 4;
                     jump = 0;
