@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import javax.print.attribute.standard.Media;
 import javax.swing.JFrame;
 
 /**
@@ -116,14 +117,15 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void update(){
-        
+        /*MediaPlayer(new Media());
+        play();*/
         chaR.yPos += gravity;
-        /*for (int i = 0; i < ground.length; i++){
-            if (ground[i].xPos <= -ground[i].SIZE){
-                ground[i].xPos += getWidth() + ground[i].SIZE;
+        for (int i = 0; i < ground.length; i++){
+            if (ground[i].xPos <= -ground[i].WIDTH){
+                ground[i].xPos += getWidth() + ground[i].WIDTH;
             }
             ground[i].xPos -= chaR.HORIZ_VEL;
-        }*/
+        }
         
         key.update();
         if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),

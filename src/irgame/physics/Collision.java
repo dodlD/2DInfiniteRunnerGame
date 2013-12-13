@@ -21,6 +21,8 @@ public class Collision {
         
         if (!Game.chaR.state.equals("jumping")){
             for (int i = 0; i < Game.ground.length; i++){
+                
+                
                 if (Game.chaR.xPos + Game.chaR.WIDTH > Game.ground[i].xPos){
                     
                     currGrndObj = i;
@@ -34,8 +36,11 @@ public class Collision {
             }else{
                 Game.chaR.state = "falling";
             }
-            if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[currGrndObj + 1].xPos && Game.ground[currGrndObj + 1].yPos < Game.HEIGHT - Game.ground[currGrndObj + 1].HEIGHT){
-                Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+            if (currGrndObj == 20){
+                currGrndObj = -1;
+                if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[currGrndObj + 1].xPos && Game.ground[currGrndObj + 1].yPos < Game.HEIGHT - Game.ground[currGrndObj + 1].HEIGHT){
+                    Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                }
             }
         }
     }
