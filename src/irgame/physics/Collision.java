@@ -38,10 +38,10 @@ public class Collision {
             }
             if (currGrndObj == 20){
                 currGrndObj = -1;
-                if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[currGrndObj + 1].xPos && Game.ground[currGrndObj + 1].yPos < Game.HEIGHT - Game.ground[currGrndObj + 1].HEIGHT){
+            }
+            if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[currGrndObj + 1].xPos && Game.ground[currGrndObj + 1].yPos < Game.HEIGHT - Game.ground[currGrndObj + 1].HEIGHT){
                     Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
                 }
-            }
         }
     }
 }

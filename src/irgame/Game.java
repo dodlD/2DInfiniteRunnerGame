@@ -10,7 +10,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
-import javax.print.attribute.standard.Media;
 import javax.swing.JFrame;
 
 /**
@@ -92,7 +91,6 @@ public class Game extends Canvas implements Runnable {
         //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
         chaR = new irgame.object.Character();
         
-        
         while(running) {
             long now = System.nanoTime();
             delta += (now - lastTime) / ns;
@@ -117,14 +115,18 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void update(){
-        /*MediaPlayer(new Media());
-        play();*/
         chaR.yPos += gravity;
         for (int i = 0; i < ground.length; i++){
             if (ground[i].xPos <= -ground[i].WIDTH){
                 ground[i].xPos += getWidth() + ground[i].WIDTH;
             }
             ground[i].xPos -= chaR.HORIZ_VEL;
+        }
+        
+        if (chaR.xPos <= -chaR.WIDTH){
+            chaR.xPos += getWidth() + chaR.WIDTH;
+        }else if (chaR.xPos + chaR.WIDTH >= getWidth() + chaR.WIDTH){
+            chaR.xPos -= getWidth() + chaR.WIDTH;
         }
         
         key.update();
