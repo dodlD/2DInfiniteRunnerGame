@@ -7,6 +7,8 @@ package irgame.object;
 import irgame.Game;
 import irgame.graphics.SpriteSheet;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Rectangle;
 
 /**
  *
@@ -20,7 +22,7 @@ public class Character{
     public static final Image HEAD = sheet.img.getSubimage(0, 0, SPRITE_SIZE, SPRITE_SIZE);
     public static final Image BODY = sheet.img.getSubimage(32, 0, SPRITE_SIZE, SPRITE_SIZE);
     private final int START_X_POS = Game.WIDTH / 2 - Ground.SPRITE_SIZE;
-    private final int START_Y_POS = Game.HEIGHT - /*Game.ground[i].SIZE*/ (32 + HEIGHT);
+    private final int START_Y_POS = Game.HEIGHT - /*(32 + HEIGHT)*/ 170;
     //public final int HEIGHT = SIZE * 2;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
@@ -28,7 +30,15 @@ public class Character{
     public final int JUMP_FORCE = 4; //The force of a characters jump measured in pixels
     public final int JUMP_HEIGHT = 64;
     public String state = "standing";
+    private Rectangle hitBox = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
 
     public Character(){
     }
+    
+    public boolean Intersect(Rectangle r){
+        System.out.println("(" + hitBox.x + ", " + hitBox.y + "), (" + (hitBox.x+hitBox.width) + ", " + (hitBox.y+hitBox.height) + ")");
+        System.out.println("(" + r.x + ", " + r.y + "), (" + (r.x+r.width) + ", " + (r.y+r.height) + ")");
+        return hitBox.intersects(r);   
+    }
+    
 }

@@ -43,7 +43,7 @@ public class Game extends Canvas implements Runnable {
     //private Image ground;
     
     public Game(){
-        Dimension winSize = new Dimension(WIDTH/* * scale*/, HEIGHT/* * scale*/);
+        Dimension winSize = new Dimension(WIDTH, HEIGHT);
         setPreferredSize(winSize);
         
         //screen = new Screen(width, height);
@@ -81,7 +81,7 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < ground.length; i++){
             /*int r = (int)(Math.random() * 3 + 1);
             System.out.println(r);*/
-            if(i == 9){
+            if(i == 80){
                 ground[i] = new Ground(0, 0, i, 2);
             }else{
                 ground[i] = new Ground(0, 0, i, 1);
