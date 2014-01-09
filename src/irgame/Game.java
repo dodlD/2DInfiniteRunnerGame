@@ -81,14 +81,12 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < ground.length; i++){
             /*int r = (int)(Math.random() * 3 + 1);
             System.out.println(r);*/
-            if(i == 80){
+            if(i == 5){
                 ground[i] = new Ground(0, 0, i, 2);
             }else{
                 ground[i] = new Ground(0, 0, i, 1);
             }
-            
         }
-        //chaR = new irgame.object.Character((getWidth() / chaR.getSIZE()) / 2 - chaR.getSIZE() , (getHeight() / chaR.getSIZE()) / 2 - chaR.getSIZE() );
         chaR = new irgame.object.Character();
         
         while(running) {
@@ -116,11 +114,15 @@ public class Game extends Canvas implements Runnable {
     
     public void update(){
         chaR.yPos += gravity;
+        chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
         for (int i = 0; i < ground.length; i++){
             if (ground[i].xPos <= -ground[i].WIDTH){
                 ground[i].xPos += getWidth() + ground[i].WIDTH;
+                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+                System.out.println(ground[i].xPos);
             }
             ground[i].xPos -= chaR.HORIZ_VEL;
+            
         }
         
         if (chaR.xPos <= -chaR.WIDTH){
@@ -135,9 +137,10 @@ public class Game extends Canvas implements Runnable {
                 gravity = 0;
                 if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
                     chaR.yPos -= chaR.JUMP_FORCE;
+                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
                     chaR.state = "jumping";
                     jump++;
-                } else{
+                }else {
                     gravity = 4;
                     jump = 0;
                     chaR.state = "falling";
@@ -145,8 +148,8 @@ public class Game extends Canvas implements Runnable {
             }
         }
         //if (key.down){}
-        if (key.left){chaR.xPos -= chaR.HORIZ_VEL;}
-        if (key.right){chaR.xPos += chaR.HORIZ_VEL;}
+        if (key.left){chaR.xPos -= chaR.HORIZ_VEL; /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;}
+        if (key.right){chaR.xPos += chaR.HORIZ_VEL; /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;}
         Collision.update();
     }
     
@@ -164,6 +167,7 @@ public class Game extends Canvas implements Runnable {
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
             g.drawImage(ground[i].sprite, ground[i].xPos, ground[i].yPos, null);
+            //System.out.println(ground[i].xPos);
         }
         
         //Character rendering
