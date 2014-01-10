@@ -86,6 +86,7 @@ public class Game extends Canvas implements Runnable {
             }else{
                 ground[i] = new Ground(0, 0, i, 1);
             }
+            //System.out.println(ground[i].xPos + ", " + ground[i].yPos);
         }
         chaR = new irgame.object.Character();
         
@@ -119,10 +120,9 @@ public class Game extends Canvas implements Runnable {
             if (ground[i].xPos <= -ground[i].WIDTH){
                 ground[i].xPos += getWidth() + ground[i].WIDTH;
                 ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
-                System.out.println(ground[i].xPos);
             }
             ground[i].xPos -= chaR.HORIZ_VEL;
-            
+            ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
         }
         
         if (chaR.xPos <= -chaR.WIDTH){

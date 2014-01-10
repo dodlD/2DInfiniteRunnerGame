@@ -46,12 +46,18 @@ public class Collision {
         
         for (int i = 0; i < Game.ground.length; i++){     
             if (Game.chaR.Intersect(Game.ground[i].hitBox)){
-                /*if (Game.chaR.xPos + Game.chaR.WIDTH == Game.ground[i].xPos && Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[i].yPos ){
-                    Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
-                } */ 
-                Game.chaR.yPos -= Game.gravity;
-                Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
-                Game.chaR.state = "standing";
+                if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[i].xPos && Game.ground[i].yPos < Game.HEIGHT - 32){
+                    if (Game.chaR.state.equals("jumping")){
+                        Game.chaR.xPos -= Game.chaR.HORIZ_VEL;                      
+                    }else{
+                        Game.chaR.yPos -= Game.gravity;
+                        Game.chaR.xPos -= Game.chaR.HORIZ_VEL;  
+                    }
+                }else {
+                    Game.chaR.yPos -= Game.gravity;
+                    Game.chaR.state = "standing";
+                }
+                Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);  
             }   
         }     
     }
