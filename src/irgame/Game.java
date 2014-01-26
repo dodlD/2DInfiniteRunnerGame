@@ -140,7 +140,7 @@ public class Game extends Canvas implements Runnable {
                     chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
                     chaR.state = "jumping";
                     jump++;
-                }else {
+                }else{
                     gravity = 4;
                     jump = 0;
                     chaR.state = "falling";

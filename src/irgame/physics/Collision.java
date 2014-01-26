@@ -1,6 +1,7 @@
 package irgame.physics;
 
 import irgame.Game;
+import static irgame.Game.chaR;
 import irgame.object.Character;
 
 /*
@@ -44,18 +45,41 @@ public class Collision {
                 }
         }*/
         System.out.println(Game.chaR.state);
-        for (int i = 0; i < Game.ground.length; i++){     
+        for (int i = 0; i < Game.ground.length; i++){
+            
             if (Game.chaR.Intersect(Game.ground[i].hitBox)){
-                if (Game.chaR.xPos + Game.chaR.WIDTH >= Game.ground[i].xPos && Game.ground[i].yPos < Game.HEIGHT - 32){
+                if (Game.ground[i].yPos < Game.HEIGHT - 32 && Game.chaR.yPos + Game.chaR.HEIGHT >= Game.ground[i].yPos){
+                    switch (Game.chaR.state) {
+                        case "standing":
+                            Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                            Game.chaR.yPos -= Game.gravity;
+                            break;
+                        case "jumping":
+                            Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                            break;
+                        case "falling":
+                            Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                            break;
+                    }
+                }else {
+                    Game.chaR.yPos -= Game.gravity;
+                    Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
+                    Game.chaR.state = "standing";
+                }
+            }
+            
+            /*if (Game.chaR.Intersect(Game.ground[i].hitBox)){
+                if (Game.chaR.xPos + Game.chaR.WIDTH > Game.ground[i].xPos && Game.ground[i].yPos > Game.HEIGHT - 32){
                     if (Game.chaR.state.equals("jumping")){
                         Game.chaR.xPos -= Game.chaR.HORIZ_VEL;                      
                     }else if (Game.chaR.state.equals("falling")){ 
-                        if (Game.chaR.yPos + 64 > Game.ground[i].yPos && Game.chaR.yPos + 64 < Game.ground[i].yPos + 32){
+                        /*if (Game.chaR.yPos + 64 > Game.ground[i].yPos && Game.chaR.yPos + 64 < Game.ground[i].yPos + 32){
                             Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
                             Game.chaR.yPos += Game.gravity;
-                        }
+                        }*/
+               /*         Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
                         Game.chaR.yPos -= Game.gravity;
-                    }else {
+                    }else if (Game.chaR.state.equals("standing")){
                         Game.chaR.xPos -= Game.chaR.HORIZ_VEL; 
                         Game.chaR.yPos -= Game.gravity;
                         System.out.println("yolo");
@@ -64,8 +88,8 @@ public class Collision {
                     Game.chaR.yPos -= Game.gravity;
                     Game.chaR.state = "standing";
                 }
-                Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);  
-            }   
+                Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
+            }*/ 
         }     
     }
 }

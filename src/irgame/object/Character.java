@@ -38,7 +38,7 @@ public class Character{
     public boolean Intersect(Rectangle r){
         //System.out.println("(" + hitBox.x + ", " + hitBox.y + "), (" + (hitBox.x+hitBox.width) + ", " + (hitBox.y+hitBox.height) + ")");
         //System.out.println("(" + r.x + ", " + r.y + "), (" + (r.x+r.width) + ", " + (r.y+r.height) + ")");
-        return hitBox.intersects(r);   
+        return hitBox.intersects(r);
     }
     
 }
