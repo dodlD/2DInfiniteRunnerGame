@@ -22,7 +22,7 @@ public class Character{
     public static final Image HEAD = sheet.img.getSubimage(0, 0, SPRITE_SIZE, SPRITE_SIZE);
     public static final Image BODY = sheet.img.getSubimage(32, 0, SPRITE_SIZE, SPRITE_SIZE);
     private final int START_X_POS = Game.WIDTH / 2 - Ground.SPRITE_SIZE;
-    private final int START_Y_POS = Game.HEIGHT - (32 + HEIGHT);
+    private final int START_Y_POS = Game.HEIGHT / 2;
     //public final int HEIGHT = SIZE * 2;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
