@@ -102,7 +102,7 @@ public class Game extends Canvas implements Runnable {
                 ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
             }*/
             
-            if (i == 21){
+            if (i == 20){
                 yCoordinates[i] = 2;
             }else if(i != 0){
                 switch(yCoordinates[i-1]){
@@ -156,7 +156,7 @@ public class Game extends Canvas implements Runnable {
                 ground[i].xPos += getWidth() + ground[i].WIDTH;
                 ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
             }
-            ground[i].xPos -= chaR.HORIZ_VEL;
+            ground[i].xPos -= ground[0].HORIZ_VEL;
             ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
         }
         
@@ -170,7 +170,7 @@ public class Game extends Canvas implements Runnable {
         
         key.update();
         if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
-            if (chaR.state.equals("standing") || chaR.state.equals("jumping")){ //If the character is standing or jumping
+            if (chaR.state.equals("walking") || chaR.state.equals("jumping")){ //If the character is standing or jumping
                 //gravity = 0;
                 if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
                     chaR.yPos -= chaR.JUMP_FORCE + gravity;
@@ -186,8 +186,18 @@ public class Game extends Canvas implements Runnable {
             }
         }
         //if (key.down){}
-        if (key.left){chaR.xPos -= chaR.HORIZ_VEL; /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;}
-        if (key.right){chaR.xPos += chaR.HORIZ_VEL; /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;}
+        if (key.left){
+            chaR.xPos -= ground[0].HORIZ_VEL;
+            chaR.HORIZ_VEL = -2;
+            /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;
+        }
+        if (key.right){
+            chaR.xPos += ground[0].HORIZ_VEL; 
+            chaR.HORIZ_VEL = 2;
+            /*chaR.hitBox.setLocation(chaR.xPos, chaR.yPos)*/;
+        }else{
+            chaR.HORIZ_VEL = 0;
+        }
         Collision.update();
     }
     

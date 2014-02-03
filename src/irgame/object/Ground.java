@@ -25,6 +25,7 @@ public class Ground{
     private int spriteYPos;
     public int xPos;
     public int yPos;
+    public int HORIZ_VEL = 2;
     public Rectangle hitBox;
     
     public Ground(int spriteXPos, int spriteYPos, int startXPos, int startYPos){

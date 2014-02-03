@@ -12,17 +12,34 @@ public class Collision {
             if (Game.chaR.Intersect(Game.ground[i].hitBox)){
                 if (Game.ground[i].yPos < Game.HEIGHT - 32 && Game.chaR.xPos /*+ Game.chaR.WIDTH*/ </*=*/ Game.ground[i].xPos /*+ Game.ground[i].WIDTH*/){
                     switch (Game.chaR.state) {
-                        case "standing":
-                            Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                        case "walking":
+                            Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
                             //Game.chaR.yPos -= Game.gravity;
                             Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
                             break;
                         case "jumping":
-                            Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                            Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
                             Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
                             break;
                         case "falling":
-                            //Game.chaR.xPos -= Game.chaR.HORIZ_VEL;
+                            //Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
+                            Game.chaR.yPos -= Game.gravity;
+                            Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
+                            break;
+                    }
+                }else if (Game.ground[i].yPos < Game.HEIGHT - 32 && Game.chaR.xPos <Game.ground[i].xPos - 32){
+                    switch (Game.chaR.state) {
+                        /*case "walking":
+                            Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
+                            //Game.chaR.yPos -= Game.gravity;
+                            Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
+                            break;
+                        case "jumping":
+                            Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
+                            Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
+                            break;*/
+                        case "falling":
+                            //Game.chaR.xPos -= Game.ground[0].HORIZ_VEL + Game.chaR.HORIZ_VEL;
                             Game.chaR.yPos -= Game.gravity;
                             Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
                             break;
@@ -30,7 +47,7 @@ public class Collision {
                 }else {
                     Game.chaR.yPos -= Game.gravity;
                     Game.chaR.hitBox.setLocation(Game.chaR.xPos, Game.chaR.yPos);
-                    Game.chaR.state = "standing";
+                    Game.chaR.state = "walking";
                 }
             }
         }     

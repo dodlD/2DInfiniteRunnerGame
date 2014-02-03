@@ -10,25 +10,7 @@ import java.awt.event.KeyListener;
  * @author Daniel
  */
 public class Keyboard implements KeyListener{
-    
-    /*public static void check(GameContainer gc, int delta){
-        Input input = gc.getInput();
-        
-        if(input.isKeyDown(Input.KEY_UP) || input.isKeyDown(Input.KEY_W)){    
-            GamePlay.chaR.setYPos(-2 * delta);
-        }
-        if(input.isKeyDown(Input.KEY_DOWN) || input.isKeyDown(Input.KEY_S)){
-            //GamePlay.chaR.setYPos(1 * delta);
-        }
-        if(input.isKeyDown(Input.KEY_LEFT) || input.isKeyDown(Input.KEY_A)){
-            
-            GamePlay.chaR.setXPos(-1 * delta);
-        }
-        if(input.isKeyDown(Input.KEY_RIGHT) || input.isKeyDown(Input.KEY_D)){   
-            GamePlay.chaR.setXPos(1 * delta);
-        }
-    }*/
-    
+  
     private boolean[] keys = new boolean[120];
     public boolean up, down, left, right;
     

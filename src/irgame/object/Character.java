@@ -26,10 +26,10 @@ public class Character{
     //public final int HEIGHT = SIZE * 2;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
-    public int HORIZ_VEL = 2;
+    public int HORIZ_VEL = 0;
     public final int JUMP_FORCE = 4; //The force of a characters jump measured in pixels
     public final int JUMP_HEIGHT = 64;
-    public String state = "standing";
+    public String state = "walking";
     public Rectangle hitBox = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
 
     public Character(){
