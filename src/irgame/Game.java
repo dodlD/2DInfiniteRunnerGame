@@ -102,7 +102,7 @@ public class Game extends Canvas implements Runnable {
                 ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
             }*/
             
-            /*if (i == 20){
+            if (i == 20){
                 yCoordinates[i] = 2;
             }else if(i != 0){
                 switch(yCoordinates[i-1]){
@@ -120,12 +120,7 @@ public class Game extends Canvas implements Runnable {
                 yCoordinates[i] = (int)(Math.random() * 3 + 1);
             }
             ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-            System.out.println(yCoordinates[i]);*/
-            if (i == 5){
-                ground[i] = new Ground(0, 0, i, 2);
-            }else{
-                ground[i] = new Ground(0, 0, i, 1);
-            }
+            System.out.println(yCoordinates[i]);
         }
         
         chaR = new irgame.object.Character();
