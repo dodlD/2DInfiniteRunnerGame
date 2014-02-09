@@ -18,36 +18,27 @@ import javax.swing.JFrame;
 public class Game extends Canvas implements Runnable {   
     private static final long serialVersionUID = 1L;
     
-    private static final String GAMETITLE = "Plud";
+    private static final String GAMETITLE = "Wud";
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH * 9 / 16;
-    // public static int scale = 3;
     
     private Thread thread;
     private JFrame frame;
     private Keyboard key;
     private boolean running = false;
     
-    //private Screen screen;
-    
-    //private BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-    //private int[] pixels = ((DataBufferInt)img.getRaster().getDataBuffer()).getData();
-    
-    public static int gravity = 4;
-    
-    //public static Ground ground;
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
+    public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
     int[] yCoordinates = new int[ground.length];
     public static Character chaR;
     
+    public static int gravity = 4;
     private int jump = 0;
-    //private Image ground;
     
     public Game(){
         Dimension winSize = new Dimension(WIDTH, HEIGHT);
         setPreferredSize(winSize);
         
-        //screen = new Screen(width, height);
         frame = new JFrame();
         
         key = new Keyboard();
@@ -75,36 +66,17 @@ public class Game extends Canvas implements Runnable {
         final double ns = 1000000000.0 / 60.0;
         double delta = 0;
         
-        int frames = 0;
         int updates = 0;
+        int frames = 0;
         
-        //ground = new Ground(0, 0);
+        
         for (int i = 0; i < ground.length; i++){
-            
-            /*if (i != 0){
-                switch(yCoordinates[i-1]){
-                    case 1:
-                        yCoordinates[i] = (int)(Math.random() * 2 + 1);
-                        ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-                        break;
-                    case 2:
-                        yCoordinates[i] = (int)(Math.random() * 3 + 1);
-                        ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-                        break;
-                    case 3:
-                        yCoordinates[i] = (int)(Math.random() * 3 + 2);
-                        ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-                        break;
-                    }
-                
-            }else{
+            if (i == 0){
+                System.out.println(yCoordinates[20]);
                 yCoordinates[i] = (int)(Math.random() * 3 + 1);
-                ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-            }*/
-            
-            if (i == 20){
+            }else if(i == 20){
                 yCoordinates[i] = 2;
-            }else if(i != 0){
+            }else{
                 switch(yCoordinates[i-1]){
                     case 1:
                         yCoordinates[i] = (int)(Math.random() * 2 + 1);
@@ -116,13 +88,60 @@ public class Game extends Canvas implements Runnable {
                         yCoordinates[i] = (int)(Math.random() * 2 + 2);
                         break;
                 }
-            }else{
-                yCoordinates[i] = (int)(Math.random() * 3 + 1);
             }
-            ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-            System.out.println(yCoordinates[i]);
+                    
+            //ground[i] = new Ground(0, 0, i, yCoordinates[i]);
+            groundFill[i] = new Ground(4, 0, i, yCoordinates[i]-1);
+            groundFill[21+i] = new Ground(4, 0, i, yCoordinates[i]-2);
         }
         
+        for (int i = 0; i < ground.length; i++){
+            //Checks and decides what sprite should be used for each block
+            if (i == 0){
+                if (yCoordinates[i] <= yCoordinates[20]){
+                     if (yCoordinates[i] <= yCoordinates[i+1]){
+                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
+                    }  
+                }else {
+                    if (yCoordinates[i] > yCoordinates[i+1]){
+                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
+                    }
+                } 
+            }else if (i == 20){
+                if (yCoordinates[i] <= yCoordinates[i-1]){
+                    if (yCoordinates[i] <= yCoordinates[0]){
+                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
+                    } 
+                }else {
+                    if (yCoordinates[i] > yCoordinates[0]){
+                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
+                    }
+                }
+            }else {
+                if (yCoordinates[i] <= yCoordinates[i-1]){
+                    if (yCoordinates[i] <= yCoordinates[i+1]){
+                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
+                    }  
+                }else {
+                    if (yCoordinates[i] > yCoordinates[i+1]){
+                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
+                    }else {
+                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
+                    }
+                }
+            }
+        }
+
         chaR = new irgame.object.Character();
         
         while(running) {
@@ -130,7 +149,7 @@ public class Game extends Canvas implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             
-            while(delta >= 1){
+            while (delta >= 1){
                 update();
                 updates++;
                 delta--;
@@ -152,15 +171,94 @@ public class Game extends Canvas implements Runnable {
         chaR.yPos += gravity;
         chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
         
+        //Ground moving
         for (int i = 0; i < ground.length; i++){
             if (ground[i].xPos <= -ground[i].WIDTH){
+                if (i == 0){
+                    yCoordinates[i] = (int)(Math.random() * 3 + 1);
+                }else if(i == 20){
+                    yCoordinates[i] = 2;
+                }else{
+                    switch(yCoordinates[i-1]){
+                        case 1:
+                            yCoordinates[i] = (int)(Math.random() * 2 + 1);
+                            break;
+                        case 2:
+                            yCoordinates[i] = (int)(Math.random() * 3 + 1);
+                            break;
+                        case 3:
+                            yCoordinates[i] = (int)(Math.random() * 2 + 2);
+                            break;
+                    }
+                }
+                
+                if (i == 0){
+                    System.out.println(yCoordinates[i] + ", " + yCoordinates[20]);
+                    if (yCoordinates[i] <= yCoordinates[20]){
+                         if (yCoordinates[i] <= yCoordinates[i+1]){
+                            ground[i].spriteXPos = 0 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 2 * ground[i].WIDTH;
+                        }  
+                    }else {
+                        if (yCoordinates[i] > yCoordinates[i+1]){
+                            ground[i].spriteXPos = 3 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 1 * ground[i].WIDTH;
+                        }
+                    } 
+                }else if(i == 20){
+                    if (yCoordinates[i] <= yCoordinates[i-1]){
+                        if (yCoordinates[i] <= yCoordinates[0]){
+                            ground[i].spriteXPos = 0 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 2 * ground[i].WIDTH;
+                        } 
+                    }else {
+                        if (yCoordinates[i] > yCoordinates[0]){
+                            ground[i].spriteXPos = 3 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 1 * ground[i].WIDTH;
+                        }
+                    }
+                }else{
+                    if (yCoordinates[i] <= yCoordinates[i-1]){
+                        if (yCoordinates[i] <= yCoordinates[i+1]){
+                            ground[i].spriteXPos = 0 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 2 * ground[i].WIDTH;
+                        }  
+                    }else {
+                        if (yCoordinates[i] > yCoordinates[i+1]){
+                            ground[i].spriteXPos = 3 * ground[i].WIDTH;
+                        }else {
+                            ground[i].spriteXPos = 1 * ground[i].WIDTH;
+                        }
+                    }
+                }
+                
+                ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
+                groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (yCoordinates[i]-1);
+                groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
+                
                 ground[i].xPos += getWidth() + ground[i].WIDTH;
                 ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+
+                groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
+                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+                groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
+                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
             }
             ground[i].xPos -= ground[0].HORIZ_VEL;
             ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+            
+            groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
+            groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+            groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
+            groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
         }
         
+        //What happens when the character is outside the grapichal area
         if (chaR.xPos <= -chaR.WIDTH){
             chaR.xPos += getWidth() + chaR.WIDTH;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
@@ -172,14 +270,12 @@ public class Game extends Canvas implements Runnable {
         key.update();
         if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
             if (chaR.state.equals("walking") || chaR.state.equals("jumping")){ //If the character is standing or jumping
-                //gravity = 0;
                 if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
                     chaR.yPos -= chaR.JUMP_FORCE + gravity;
                     chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
                     chaR.state = "jumping";
                     jump++;
                 }else {
-                    //gravity = 4;
                     jump = 0;
                     chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
                     chaR.state = "falling";
@@ -215,18 +311,20 @@ public class Game extends Canvas implements Runnable {
         
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
-            g.drawImage(ground[i].sprite, ground[i].xPos, ground[i].yPos, null);
+            g.drawImage(ground[i].sprite[ground[i].spriteXPos/32], ground[i].xPos, ground[i].yPos, null);
+            g.drawImage(groundFill[i].sprite[4], groundFill[i].xPos, groundFill[i].yPos, null);
+            g.drawImage(groundFill[21+i].sprite[4], groundFill[21+i].xPos, groundFill[21+i].yPos, null);
             g.setColor(Color.red);                                       //
-            g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
-                    ground[i].hitBox.width, ground[i].hitBox.height);    //
-            g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Nummer
+            //g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
+            //        ground[i].hitBox.width, ground[i].hitBox.height);    //
+            g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
         }
         
         //Character rendering
         g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SPRITE_SIZE, null);
         g.drawImage(chaR.HEAD, chaR.xPos, chaR.yPos, null);
-        g.setColor(Color.red);                                      //Hitbox
-        g.drawRect(chaR.xPos, chaR.yPos, chaR.WIDTH, chaR.HEIGHT);  //
+        //g.setColor(Color.red);                                      //Hitbox
+        //g.drawRect(chaR.xPos, chaR.yPos, chaR.WIDTH, chaR.HEIGHT);  //
         
         
         g.dispose();
