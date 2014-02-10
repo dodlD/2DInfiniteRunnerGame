@@ -8,6 +8,7 @@ import irgame.physics.Collision;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import javax.swing.JFrame;
@@ -26,6 +27,10 @@ public class Game extends Canvas implements Runnable {
     private JFrame frame;
     private Keyboard key;
     private boolean running = false;
+    private int elapsedMilliSeconds;
+    private int elapsedSeconds;
+    private int elapsedMinutes;
+    private String time = Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds);
     
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
@@ -66,13 +71,18 @@ public class Game extends Canvas implements Runnable {
         final double ns = 1000000000.0 / 60.0;
         double delta = 0;
         
+        long startTime = System.currentTimeMillis(); 
+        long startTimeMS = System.currentTimeMillis();
+        long startTimeS = System.currentTimeMillis();
+        long startTimeM = System.currentTimeMillis();
+        
+        
         int updates = 0;
         int frames = 0;
         
         
         for (int i = 0; i < ground.length; i++){
             if (i == 0){
-                System.out.println(yCoordinates[20]);
                 yCoordinates[i] = (int)(Math.random() * 3 + 1);
             }else if(i == 20){
                 yCoordinates[i] = 2;
@@ -149,6 +159,38 @@ public class Game extends Canvas implements Runnable {
             delta += (now - lastTime) / ns;
             lastTime = now;
             
+            long currTime = System.currentTimeMillis();
+            long deltaTimeMS = currTime - startTimeMS;
+            long deltaTimeS = currTime - startTimeS;
+            long deltaTimeM = currTime - startTimeM;
+            
+            
+            if (elapsedMilliSeconds < 100){
+                elapsedMilliSeconds = (int) ((deltaTimeMS) / 10);
+                if (elapsedMilliSeconds < 10){
+                    time.replace(Integer.toString(elapsedMilliSeconds), "0" + Integer.toString(elapsedMilliSeconds));
+                }else {
+                    time.replace("0" + Integer.toString(elapsedMilliSeconds), Integer.toString(elapsedMilliSeconds));
+                }
+            }else {
+                startTimeMS = currTime;
+                elapsedMilliSeconds = 0;  
+            }
+            
+            if (elapsedSeconds < 60){
+                elapsedSeconds = (int) ((deltaTimeS) / 1000);
+            }else {
+                startTimeS = currTime;
+                elapsedSeconds = 0;
+            }
+            
+            if (elapsedMinutes < 60){
+                elapsedMinutes = (int) ((deltaTimeM) / 60000);
+            }else {
+                startTimeM = currTime;
+                elapsedMinutes = 0;
+            }
+            
             while (delta >= 1){
                 update();
                 updates++;
@@ -192,8 +234,29 @@ public class Game extends Canvas implements Runnable {
                     }
                 }
                 
-                if (i == 0){
-                    System.out.println(yCoordinates[i] + ", " + yCoordinates[20]);
+                ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
+                groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (yCoordinates[i]-1);
+                groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
+                
+                ground[i].xPos += getWidth() + ground[i].WIDTH;
+                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+
+                groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
+                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+                groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
+                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+            }
+            ground[i].xPos -= ground[0].HORIZ_VEL;
+            ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+            
+            groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
+            groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+            groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
+            groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+        }
+        
+        for (int i = 0; i < ground.length; i++){
+            if (i == 0){
                     if (yCoordinates[i] <= yCoordinates[20]){
                          if (yCoordinates[i] <= yCoordinates[i+1]){
                             ground[i].spriteXPos = 0 * ground[i].WIDTH;
@@ -236,26 +299,6 @@ public class Game extends Canvas implements Runnable {
                         }
                     }
                 }
-                
-                ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-                groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (yCoordinates[i]-1);
-                groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
-                
-                ground[i].xPos += getWidth() + ground[i].WIDTH;
-                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
-
-                groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
-                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-                groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
-                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
-            }
-            ground[i].xPos -= ground[0].HORIZ_VEL;
-            ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
-            
-            groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
-            groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-            groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
-            groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
         }
         
         //What happens when the character is outside the grapichal area
@@ -287,7 +330,10 @@ public class Game extends Canvas implements Runnable {
             chaR.xPos -= ground[0].HORIZ_VEL;
             chaR.HORIZ_VEL = -2;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+        }else{
+            chaR.HORIZ_VEL = 0;
         }
+        
         if (key.right){
             chaR.xPos += ground[0].HORIZ_VEL; 
             chaR.HORIZ_VEL = 2;
@@ -295,6 +341,22 @@ public class Game extends Canvas implements Runnable {
         }else{
             chaR.HORIZ_VEL = 0;
         }
+        
+        switch (chaR.state){
+            case "walking":
+                chaR.HEAD = chaR.sheet.img.getSubimage(0, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                break;
+            case "jumping":
+                chaR.HEAD = chaR.sheet.img.getSubimage(32, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.BODY = chaR.sheet.img.getSubimage(32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                break;
+            case "falling":
+                chaR.HEAD = chaR.sheet.img.getSubimage(32, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.BODY = chaR.sheet.img.getSubimage(32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                break;
+        }
+        
         Collision.update();
     }
     
@@ -309,15 +371,20 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
         
+        //Time rendering
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 12));
+        g.drawString(time, 550, 30);
+        
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
             g.drawImage(ground[i].sprite[ground[i].spriteXPos/32], ground[i].xPos, ground[i].yPos, null);
             g.drawImage(groundFill[i].sprite[4], groundFill[i].xPos, groundFill[i].yPos, null);
             g.drawImage(groundFill[21+i].sprite[4], groundFill[21+i].xPos, groundFill[21+i].yPos, null);
-            g.setColor(Color.red);                                       //
+            //g.setColor(Color.red);                                       //
             //g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
             //        ground[i].hitBox.width, ground[i].hitBox.height);    //
-            g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
+            //g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
         }
         
         //Character rendering

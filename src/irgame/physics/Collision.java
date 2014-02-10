@@ -14,15 +14,13 @@ public class Collision {
                     if (Game.chaR.Intersect(Game.ground[i].hitBox) ){
                         if ((Game.HEIGHT - Game.ground[i].yPos) / 32  > 1){
                             if(Game.chaR.yPos + Game.chaR.HEIGHT < Game.ground[i].yPos + 5){
-                                if(Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[i].yPos){ //Prevents the user from be able to jump when falling of a block
+                                /*if(Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[i].yPos){ //Prevents the user from be able to jump when falling of a block
                                     Game.chaR.state = "falling";
-                                }
-                                Game.chaR.yPos -= Game.gravity;
-                                
+                                }*/
+                                Game.chaR.yPos -= Game.gravity; 
                             }else {
                                 Game.chaR.xPos -= Game.ground[i].HORIZ_VEL + Game.chaR.HORIZ_VEL;
                             }
-                            
                         }else {
                             Game.chaR.yPos -= Game.gravity; 
                         }
