@@ -30,7 +30,6 @@ public class Game extends Canvas implements Runnable {
     private int elapsedMilliSeconds;
     private int elapsedSeconds;
     private int elapsedMinutes;
-    private String time = Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds);
     
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
@@ -71,7 +70,6 @@ public class Game extends Canvas implements Runnable {
         final double ns = 1000000000.0 / 60.0;
         double delta = 0;
         
-        long startTime = System.currentTimeMillis(); 
         long startTimeMS = System.currentTimeMillis();
         long startTimeS = System.currentTimeMillis();
         long startTimeM = System.currentTimeMillis();
@@ -167,14 +165,9 @@ public class Game extends Canvas implements Runnable {
             
             if (elapsedMilliSeconds < 100){
                 elapsedMilliSeconds = (int) ((deltaTimeMS) / 10);
-                if (elapsedMilliSeconds < 10){
-                    time.replace(Integer.toString(elapsedMilliSeconds), "0" + Integer.toString(elapsedMilliSeconds));
-                }else {
-                    time.replace("0" + Integer.toString(elapsedMilliSeconds), Integer.toString(elapsedMilliSeconds));
-                }
             }else {
                 startTimeMS = currTime;
-                elapsedMilliSeconds = 0;  
+                elapsedMilliSeconds = 0;
             }
             
             if (elapsedSeconds < 60){
@@ -345,15 +338,19 @@ public class Game extends Canvas implements Runnable {
         switch (chaR.state){
             case "walking":
                 chaR.HEAD = chaR.sheet.img.getSubimage(0, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                if (i == 2){
+                    chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                }else {
+                    chaR.BODY = chaR.sheet.img.getSubimage(i*32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);    
+                }
                 break;
             case "jumping":
-                chaR.HEAD = chaR.sheet.img.getSubimage(32, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                chaR.BODY = chaR.sheet.img.getSubimage(32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.HEAD = chaR.sheet.img.getSubimage(96, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.BODY = chaR.sheet.img.getSubimage(96, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
                 break;
             case "falling":
-                chaR.HEAD = chaR.sheet.img.getSubimage(32, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                chaR.BODY = chaR.sheet.img.getSubimage(32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.HEAD = chaR.sheet.img.getSubimage(96, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
+                chaR.BODY = chaR.sheet.img.getSubimage(96, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
                 break;
         }
         
@@ -374,7 +371,7 @@ public class Game extends Canvas implements Runnable {
         //Time rendering
         g.setColor(Color.WHITE);
         g.setFont(new Font("TimesRoman", Font.PLAIN, 12));
-        g.drawString(time, 550, 30);
+        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 555, 30);
         
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
