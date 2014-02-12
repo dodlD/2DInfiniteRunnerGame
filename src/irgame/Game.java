@@ -39,6 +39,8 @@ public class Game extends Canvas implements Runnable {
     public static int gravity = 4;
     private int jump = 0;
     
+    private Font timeFont;
+    
     public Game(){
         Dimension winSize = new Dimension(WIDTH, HEIGHT);
         setPreferredSize(winSize);
@@ -47,6 +49,8 @@ public class Game extends Canvas implements Runnable {
         
         key = new Keyboard();
         addKeyListener(key);
+        
+        timeFont = new Font("TimesRoman", Font.BOLD, 16);
     }
     
     public synchronized void start() {
@@ -295,11 +299,18 @@ public class Game extends Canvas implements Runnable {
         }
         
         //What happens when the character is outside the grapichal area
-        if (chaR.xPos <= -chaR.WIDTH){
+        /*if (chaR.xPos <= -chaR.WIDTH){
             chaR.xPos += getWidth() + chaR.WIDTH;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
         }else if (chaR.xPos + chaR.WIDTH >= getWidth() + chaR.WIDTH){
             chaR.xPos -= getWidth() + chaR.WIDTH;
+            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+        }*/
+        if (chaR.xPos < 0){
+            System.out.println("Game Over");
+            running = false;
+        }else if (chaR.xPos + chaR.WIDTH >= getWidth()){
+            chaR.xPos -= Game.chaR.HORIZ_VEL;;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
         }
         
@@ -338,11 +349,12 @@ public class Game extends Canvas implements Runnable {
         switch (chaR.state){
             case "walking":
                 chaR.HEAD = chaR.sheet.img.getSubimage(0, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                if (i == 2){
+                /*if (i == 2){
                     chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
                 }else {
                     chaR.BODY = chaR.sheet.img.getSubimage(i*32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);    
-                }
+                }*/
+                chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
                 break;
             case "jumping":
                 chaR.HEAD = chaR.sheet.img.getSubimage(96, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
@@ -370,8 +382,8 @@ public class Game extends Canvas implements Runnable {
         
         //Time rendering
         g.setColor(Color.WHITE);
-        g.setFont(new Font("TimesRoman", Font.PLAIN, 12));
-        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 555, 30);
+        g.setFont(timeFont);
+        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 550, 30);
         
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
@@ -390,6 +402,9 @@ public class Game extends Canvas implements Runnable {
         //g.setColor(Color.red);                                      //Hitbox
         //g.drawRect(chaR.xPos, chaR.yPos, chaR.WIDTH, chaR.HEIGHT);  //
         
+        if (!running){
+            
+        }
         
         g.dispose();
         bs.show();
