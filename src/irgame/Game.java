@@ -1,5 +1,6 @@
 package irgame;
 
+import irgame.graphics.SpriteSheet;
 import irgame.input.Keyboard;
 import irgame.object.Character;
 import irgame.object.Ground;
@@ -204,6 +205,14 @@ public class Game extends Canvas implements Runnable {
                 frames = 0;
             }
         }
+        while(!running){   
+            if (key.p){
+                running = true;
+            }
+            if (key.r){
+                running = true;
+            }
+        }
     }
     
     public void update(){
@@ -308,6 +317,7 @@ public class Game extends Canvas implements Runnable {
         }*/
         if (chaR.xPos < 0){
             System.out.println("Game Over");
+            //Spara tiden
             running = false;
         }else if (chaR.xPos + chaR.WIDTH >= getWidth()){
             chaR.xPos -= Game.chaR.HORIZ_VEL;;
@@ -334,16 +344,16 @@ public class Game extends Canvas implements Runnable {
             chaR.xPos -= ground[0].HORIZ_VEL;
             chaR.HORIZ_VEL = -2;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }else{
-            chaR.HORIZ_VEL = 0;
-        }
-        
-        if (key.right){
+        }else if (key.right){
             chaR.xPos += ground[0].HORIZ_VEL; 
             chaR.HORIZ_VEL = 2;
             chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
         }else{
             chaR.HORIZ_VEL = 0;
+        }
+        
+        if (key.p){
+            running = false;
         }
         
         switch (chaR.state){
@@ -380,11 +390,6 @@ public class Game extends Canvas implements Runnable {
         g.setColor(Color.DARK_GRAY);
         g.fillRect(0, 0, getWidth(), getHeight());
         
-        //Time rendering
-        g.setColor(Color.WHITE);
-        g.setFont(timeFont);
-        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 550, 30);
-        
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
             g.drawImage(ground[i].sprite[ground[i].spriteXPos/32], ground[i].xPos, ground[i].yPos, null);
@@ -402,8 +407,17 @@ public class Game extends Canvas implements Runnable {
         //g.setColor(Color.red);                                      //Hitbox
         //g.drawRect(chaR.xPos, chaR.yPos, chaR.WIDTH, chaR.HEIGHT);  //
         
-        if (!running){
-            
+        //Time rendering
+        g.setColor(Color.WHITE);
+        g.setFont(timeFont);
+        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 550, 30);
+        
+        //Text rendering
+        g.drawString("p - pause", 290, 30);
+        
+        if(!running){
+            g.drawImage(new SpriteSheet("/irgame/res/textures/GameOver_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
+            System.out.println("asd");
         }
         
         g.dispose();
