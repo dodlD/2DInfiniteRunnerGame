@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
 public class Keyboard implements KeyListener{
   
     private boolean[] keys = new boolean[120];
-    public boolean up, down, left, right, p, r;
+    public boolean up, down, left, right, p, r, u;
     
     public void update(){
         up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
@@ -21,6 +21,7 @@ public class Keyboard implements KeyListener{
         right = keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];
         p = keys[KeyEvent.VK_P];
         r = keys[KeyEvent.VK_R];
+        u = keys[KeyEvent.VK_U];
     }
     
     public void keyPressed(KeyEvent e) {
@@ -32,6 +33,6 @@ public class Keyboard implements KeyListener{
     }
     
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

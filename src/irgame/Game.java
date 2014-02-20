@@ -12,7 +12,18 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileSystemView;
 
 /**
  * @author Daniel Johansson
@@ -20,7 +31,7 @@ import javax.swing.JFrame;
 public class Game extends Canvas implements Runnable {   
     private static final long serialVersionUID = 1L;
     
-    private static final String GAMETITLE = "Wud";
+    private static final String GAMETITLE = "Wüüd teh Gaem";
     public static final int WIDTH = 640;
     public static final int HEIGHT = WIDTH * 9 / 16;
     
@@ -28,19 +39,43 @@ public class Game extends Canvas implements Runnable {
     private JFrame frame;
     private Keyboard key;
     private boolean running = false;
-    private int elapsedMilliSeconds;
-    private int elapsedSeconds;
-    private int elapsedMinutes;
+    private boolean paused = false; 
+    private String elapsedMilliSeconds = "1";
+    private String elapsedSeconds = "1";
+    private String elapsedMinutes = "1";
     
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
     int[] yCoordinates = new int[ground.length];
     public static Character chaR;
+    private int anim = 0;
     
     public static int gravity = 4;
     private int jump = 0;
     
-    private Font timeFont;
+    //Gets the "My Documents" path
+    private final JFileChooser jfc = new JFileChooser();
+    private final FileSystemView fsv = jfc.getFileSystemView();
+    private final File gameDir = new File (fsv.getDefaultDirectory() + "\\" + GAMETITLE);
+    private final File highScoreDir = new File(gameDir + "\\highscore.txt");
+    private FileWriter fw;
+    
+    private boolean newHighScore = false;
+    private String highScore;
+    
+    //Test
+    long lastTime = System.nanoTime();
+    long timer = System.currentTimeMillis();
+    final double ns = 1000000000.0 / 60.0;
+    double delta = 0;
+
+    long startTimeMS = System.currentTimeMillis();
+    long startTimeS = System.currentTimeMillis();
+    long startTimeM = System.currentTimeMillis();
+
+
+    int updates = 0;
+    int frames = 0;
     
     public Game(){
         Dimension winSize = new Dimension(WIDTH, HEIGHT);
@@ -50,14 +85,23 @@ public class Game extends Canvas implements Runnable {
         
         key = new Keyboard();
         addKeyListener(key);
-        
-        timeFont = new Font("TimesRoman", Font.BOLD, 16);
     }
     
     public synchronized void start() {
         running = true;
         thread = new Thread(this, "Display");
         thread.start();
+        if (!gameDir.exists()){
+            gameDir.mkdirs();
+        }
+        if(!highScoreDir.exists()){
+            try {
+            fw = new FileWriter(highScoreDir);
+            } catch (IOException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
     }
     
     public synchronized void stop() {
@@ -70,92 +114,7 @@ public class Game extends Canvas implements Runnable {
     }
     
     public void run() {
-        long lastTime = System.nanoTime();
-        long timer = System.currentTimeMillis();
-        final double ns = 1000000000.0 / 60.0;
-        double delta = 0;
-        
-        long startTimeMS = System.currentTimeMillis();
-        long startTimeS = System.currentTimeMillis();
-        long startTimeM = System.currentTimeMillis();
-        
-        
-        int updates = 0;
-        int frames = 0;
-        
-        
-        for (int i = 0; i < ground.length; i++){
-            if (i == 0){
-                yCoordinates[i] = (int)(Math.random() * 3 + 1);
-            }else if(i == 20){
-                yCoordinates[i] = 2;
-            }else{
-                switch(yCoordinates[i-1]){
-                    case 1:
-                        yCoordinates[i] = (int)(Math.random() * 2 + 1);
-                        break;
-                    case 2:
-                        yCoordinates[i] = (int)(Math.random() * 3 + 1);
-                        break;
-                    case 3:
-                        yCoordinates[i] = (int)(Math.random() * 2 + 2);
-                        break;
-                }
-            }
-                    
-            //ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-            groundFill[i] = new Ground(4, 0, i, yCoordinates[i]-1);
-            groundFill[21+i] = new Ground(4, 0, i, yCoordinates[i]-2);
-        }
-        
-        for (int i = 0; i < ground.length; i++){
-            //Checks and decides what sprite should be used for each block
-            if (i == 0){
-                if (yCoordinates[i] <= yCoordinates[20]){
-                     if (yCoordinates[i] <= yCoordinates[i+1]){
-                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
-                    }  
-                }else {
-                    if (yCoordinates[i] > yCoordinates[i+1]){
-                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
-                    }
-                } 
-            }else if (i == 20){
-                if (yCoordinates[i] <= yCoordinates[i-1]){
-                    if (yCoordinates[i] <= yCoordinates[0]){
-                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
-                    } 
-                }else {
-                    if (yCoordinates[i] > yCoordinates[0]){
-                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
-                    }
-                }
-            }else {
-                if (yCoordinates[i] <= yCoordinates[i-1]){
-                    if (yCoordinates[i] <= yCoordinates[i+1]){
-                        ground[i] = new Ground(0, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(2, 0, i, yCoordinates[i]);
-                    }  
-                }else {
-                    if (yCoordinates[i] > yCoordinates[i+1]){
-                        ground[i] = new Ground(3, 0, i, yCoordinates[i]);
-                    }else {
-                        ground[i] = new Ground(1, 0, i, yCoordinates[i]);
-                    }
-                }
-            }
-        }
-
-        chaR = new irgame.object.Character();
+        initialize();
         
         while(running) {
             long now = System.nanoTime();
@@ -167,26 +126,34 @@ public class Game extends Canvas implements Runnable {
             long deltaTimeS = currTime - startTimeS;
             long deltaTimeM = currTime - startTimeM;
             
-            
-            if (elapsedMilliSeconds < 100){
-                elapsedMilliSeconds = (int) ((deltaTimeMS) / 10);
+            if (Integer.parseInt(elapsedMilliSeconds) < 100){
+                elapsedMilliSeconds = Integer.toString((int) ((deltaTimeMS) / 10));
+                if (Integer.parseInt(elapsedMilliSeconds) < 10){
+                    elapsedMilliSeconds = "0" + Integer.toString((int) ((deltaTimeMS) / 10)); 
+                }
             }else {
                 startTimeMS = currTime;
-                elapsedMilliSeconds = 0;
-            }
+                elapsedMilliSeconds = "1";
+            }          
             
-            if (elapsedSeconds < 60){
-                elapsedSeconds = (int) ((deltaTimeS) / 1000);
+            if (Integer.parseInt(elapsedSeconds) < 60){
+                elapsedSeconds = Integer.toString((int) ((deltaTimeS) / 1000));
+                if (Integer.parseInt(elapsedSeconds) < 10){
+                    elapsedSeconds = "0" + Integer.toString((int) ((deltaTimeS) / 1000)); 
+                }
             }else {
                 startTimeS = currTime;
-                elapsedSeconds = 0;
+                elapsedSeconds = "1";
             }
             
-            if (elapsedMinutes < 60){
-                elapsedMinutes = (int) ((deltaTimeM) / 60000);
+            if (Integer.parseInt(elapsedMinutes) < 60){
+                elapsedMinutes = Integer.toString((int) ((deltaTimeM) / 60000));
+                if (Integer.parseInt(elapsedMinutes) < 10){
+                    elapsedMinutes = "0" + Integer.toString((int) ((deltaTimeM) / 60000)); 
+                }
             }else {
                 startTimeM = currTime;
-                elapsedMinutes = 0;
+                elapsedMinutes = "1";
             }
             
             while (delta >= 1){
@@ -204,65 +171,182 @@ public class Game extends Canvas implements Runnable {
                 updates = 0;
                 frames = 0;
             }
-        }
-        while(!running){   
-            if (key.p){
-                running = true;
+            
+            while(!running){
+                key.update();
+                /*if (paused && key.u){
+                    running = true;
+                    paused = false;
+                }*/
+                if (/*!paused && */key.r){
+                    newHighScore = false;
+                    running = true;
+                    initialize();
+                }
             }
-            if (key.r){
-                running = true;
-            }
         }
+        
     }
     
-    public void update(){
-        chaR.yPos += gravity;
-        chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        
-        //Ground moving
-        for (int i = 0; i < ground.length; i++){
-            if (ground[i].xPos <= -ground[i].WIDTH){
-                if (i == 0){
-                    yCoordinates[i] = (int)(Math.random() * 3 + 1);
-                }else if(i == 20){
-                    yCoordinates[i] = 2;
-                }else{
-                    switch(yCoordinates[i-1]){
-                        case 1:
-                            yCoordinates[i] = (int)(Math.random() * 2 + 1);
-                            break;
-                        case 2:
-                            yCoordinates[i] = (int)(Math.random() * 3 + 1);
-                            break;
-                        case 3:
-                            yCoordinates[i] = (int)(Math.random() * 2 + 2);
-                            break;
-                    }
+    public void update(){   
+        key.update();
+        if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
+            if (chaR.state.equals("walking") || chaR.state.equals("jumping")){ //If the character is standing or jumping
+                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
+                    chaR.yPos -= chaR.JUMP_FORCE + gravity;
+                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.state = "jumping";
+                    jump++;
+                }else {
+                    jump = 0;
+                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.state = "falling";
                 }
-                
-                ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
-                groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (yCoordinates[i]-1);
-                groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
-                
-                ground[i].xPos += getWidth() + ground[i].WIDTH;
-                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
-
-                groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
-                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-                groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
-                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
             }
-            ground[i].xPos -= ground[0].HORIZ_VEL;
-            ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
-            
-            groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
-            groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-            groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
-            groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
         }
         
-        for (int i = 0; i < ground.length; i++){
-            if (i == 0){
+        //if (key.down){}
+        if (key.left){
+            chaR.xPos -= ground[0].HORIZ_VEL;
+            chaR.HORIZ_VEL = -2;
+            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+        }else if (key.right){
+            chaR.xPos += ground[0].HORIZ_VEL; 
+            chaR.HORIZ_VEL = 2;
+            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+        }else{
+            chaR.HORIZ_VEL = 0;
+        }
+        
+        if (key.p){
+            paused = true;
+            //running = false;
+        }
+        
+        //What happens when the character is outside the grapichal area
+        if (chaR.xPos < 0){
+            int newHS = Integer.parseInt(elapsedMinutes +""+ elapsedSeconds +""+ elapsedMilliSeconds);
+            String content;
+            int prevHS = 0;
+            try {
+                content = new String(Files.readAllBytes(Paths.get(highScoreDir.toString()))); //Reads the higscore.txt-file
+                if (!content.isEmpty()){
+                    prevHS = Integer.parseInt(content); //converts the content of the file to an int
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            if (newHS > prevHS){ //Compares the new high score (newHS) with the previous one (prevHS) and if the new high score is a higher value than the previous one
+                newHighScore = true;
+                try {
+                    String score = Integer.toString(newHS); //the new high score (newHS) gets converted to a String
+
+                    fw = new FileWriter(highScoreDir);
+                    fw.write(score);
+                    fw.close();
+                }catch (IOException iox){
+                    //do stuff with exception
+                    iox.printStackTrace();
+                }
+            }
+            
+            switch(Integer.toString(prevHS).length()){
+                case 0:
+                    highScore = "00 : 00 : 00";
+                    break;
+                case 1:
+                    highScore = "00 : 00 : 0" + Integer.toString(prevHS);
+                    break;
+                case 2:
+                    highScore = "00 : 00 :" + Integer.toString(prevHS);
+                    break;
+                case 3:
+                    highScore = "00 : 0" + Integer.toString(prevHS).substring(0, 1) + " : " + Integer.toString(prevHS).substring(1, 3);
+                    break;
+                case 4:
+                    highScore = "00 : " + Integer.toString(prevHS).substring(0, 2) + " : " + Integer.toString(prevHS).substring(2, 4);
+                    break;
+                case 5:
+                    highScore = "0" + Integer.toString(prevHS).substring(0, 1) + " : " + Integer.toString(prevHS).substring(1, 3) + " : " + Integer.toString(prevHS).substring(3, 5);
+                    break;
+                case 6:
+                    highScore = Integer.toString(prevHS).substring(0, 2) + " : " + Integer.toString(prevHS).substring(2, 4) + " : " + Integer.toString(prevHS).substring(4, 6);
+                    break;
+            }
+            running = false;
+        }else if (paused){
+            if (key.u){
+                paused = false;
+            }
+        }else {
+            if (chaR.xPos + chaR.WIDTH >= getWidth()){
+                chaR.xPos -= Game.chaR.HORIZ_VEL;;
+            }
+            
+            chaR.yPos += gravity;
+            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+            
+            //Ground moving
+            for (int i = 0; i < ground.length; i++){
+                switch (Integer.parseInt(elapsedMinutes)){
+                    case 1:
+                        ground[i].HORIZ_VEL = 3;
+                        groundFill[i].HORIZ_VEL = 3;
+                        groundFill[21+i].HORIZ_VEL = 3;
+                        break;
+                    case 2:
+                        ground[i].HORIZ_VEL = 4;
+                        groundFill[i].HORIZ_VEL = 4;
+                        groundFill[21+i].HORIZ_VEL = 4;
+                        break;
+                    case 3:
+                        ground[i].HORIZ_VEL = 5;
+                        groundFill[i].HORIZ_VEL = 5;
+                        groundFill[21+i].HORIZ_VEL = 5;
+                        break;
+                    case 4:
+                        ground[i].HORIZ_VEL = 6;
+                        groundFill[i].HORIZ_VEL = 6;
+                        groundFill[21+i].HORIZ_VEL = 6;
+                        break;
+                }
+
+                if (ground[i].xPos <= -ground[i].WIDTH){
+                    if (i == 0){
+                        groundSetYPos(19, 20, i);
+                    }else if (i == 1){
+                        groundSetYPos(20, i-1, i);
+                    }else{
+                        groundSetYPos(i-2, i-1, i);
+                    }
+
+                    //The ground the character is running on
+                    ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * yCoordinates[i];
+                    ground[i].xPos += getWidth() + ground[i].WIDTH;
+                    ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+
+                    //The filling ground 
+                    groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (yCoordinates[i]-1);
+                    groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
+                    groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+                    groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
+                    groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
+                    groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+                }
+
+                //The ground the character is running on
+                ground[i].xPos -= ground[0].HORIZ_VEL;
+                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+
+                //The filling ground 
+                groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
+                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
+                groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
+                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+            }
+
+            for (int i = 0; i < ground.length; i++){
+                if (i == 0){
                     if (yCoordinates[i] <= yCoordinates[20]){
                          if (yCoordinates[i] <= yCoordinates[i+1]){
                             ground[i].spriteXPos = 0 * ground[i].WIDTH;
@@ -305,78 +389,29 @@ public class Game extends Canvas implements Runnable {
                         }
                     }
                 }
-        }
-        
-        //What happens when the character is outside the grapichal area
-        /*if (chaR.xPos <= -chaR.WIDTH){
-            chaR.xPos += getWidth() + chaR.WIDTH;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }else if (chaR.xPos + chaR.WIDTH >= getWidth() + chaR.WIDTH){
-            chaR.xPos -= getWidth() + chaR.WIDTH;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }*/
-        if (chaR.xPos < 0){
-            System.out.println("Game Over");
-            //Spara tiden
-            running = false;
-        }else if (chaR.xPos + chaR.WIDTH >= getWidth()){
-            chaR.xPos -= Game.chaR.HORIZ_VEL;;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }
-        
-        key.update();
-        if (key.up || chaR.state.equals("jumping")){ //If the up-key is pressed or the character is already moving upwards (jumping),
-            if (chaR.state.equals("walking") || chaR.state.equals("jumping")){ //If the character is standing or jumping
-                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
-                    chaR.yPos -= chaR.JUMP_FORCE + gravity;
-                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-                    chaR.state = "jumping";
-                    jump++;
-                }else {
-                    jump = 0;
-                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-                    chaR.state = "falling";
-                }
             }
+            switch (chaR.state){
+                case "walking":
+                    if (updates == 5 || updates == 25 || updates == 45){
+                        chaR.BODY = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    }else if (updates == 10 || updates == 30 || updates == 50){
+                        chaR.BODY = chaR.sheet.img.getSubimage(1*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    }else if (updates == 15 || updates == 35 || updates == 55){
+                        chaR.BODY = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    }else if (updates == 20 || updates == 40 || updates == 60){
+                        chaR.BODY = chaR.sheet.img.getSubimage(2*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    }
+                    break;
+                case "jumping":
+                    chaR.BODY = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    break;
+                case "falling":
+                    chaR.BODY = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    break;
+            }
+            
+            Collision.update();
         }
-        //if (key.down){}
-        if (key.left){
-            chaR.xPos -= ground[0].HORIZ_VEL;
-            chaR.HORIZ_VEL = -2;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }else if (key.right){
-            chaR.xPos += ground[0].HORIZ_VEL; 
-            chaR.HORIZ_VEL = 2;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
-        }else{
-            chaR.HORIZ_VEL = 0;
-        }
-        
-        if (key.p){
-            running = false;
-        }
-        
-        switch (chaR.state){
-            case "walking":
-                chaR.HEAD = chaR.sheet.img.getSubimage(0, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                /*if (i == 2){
-                    chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
-                }else {
-                    chaR.BODY = chaR.sheet.img.getSubimage(i*32, 32, chaR.WIDTH, chaR.SPRITE_SIZE);    
-                }*/
-                chaR.BODY = chaR.sheet.img.getSubimage(0, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
-                break;
-            case "jumping":
-                chaR.HEAD = chaR.sheet.img.getSubimage(96, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                chaR.BODY = chaR.sheet.img.getSubimage(96, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
-                break;
-            case "falling":
-                chaR.HEAD = chaR.sheet.img.getSubimage(96, 0, chaR.WIDTH, chaR.SPRITE_SIZE);
-                chaR.BODY = chaR.sheet.img.getSubimage(96, 32, chaR.WIDTH, chaR.SPRITE_SIZE);
-                break;
-        }
-        
-        Collision.update();
     }
     
     public void render(){
@@ -395,29 +430,40 @@ public class Game extends Canvas implements Runnable {
             g.drawImage(ground[i].sprite[ground[i].spriteXPos/32], ground[i].xPos, ground[i].yPos, null);
             g.drawImage(groundFill[i].sprite[4], groundFill[i].xPos, groundFill[i].yPos, null);
             g.drawImage(groundFill[21+i].sprite[4], groundFill[21+i].xPos, groundFill[21+i].yPos, null);
-            //g.setColor(Color.red);                                       //
-            //g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
-            //        ground[i].hitBox.width, ground[i].hitBox.height);    //
-            //g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
+            g.setColor(Color.red);                                       //
+            g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
+                    ground[i].hitBox.width, ground[i].hitBox.height);    //
+            g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
         }
         
         //Character rendering
-        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos + chaR.SPRITE_SIZE, null);
-        g.drawImage(chaR.HEAD, chaR.xPos, chaR.yPos, null);
+        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos, null);
         //g.setColor(Color.red);                                      //Hitbox
-        //g.drawRect(chaR.xPos, chaR.yPos, chaR.WIDTH, chaR.HEIGHT);  //
+        //g.drawRect(chaR.hitBox.x, chaR.hitBox.y, chaR.hitBox.width, chaR.hitBox.height);  //
         
         //Time rendering
         g.setColor(Color.WHITE);
-        g.setFont(timeFont);
-        g.drawString(Integer.toString(elapsedMinutes) + " : " + Integer.toString(elapsedSeconds) + " : " + Integer.toString(elapsedMilliSeconds), 550, 30);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString(elapsedMinutes + " : " + elapsedSeconds + " : " + elapsedMilliSeconds, 550, 30);
         
         //Text rendering
-        g.drawString("p - pause", 290, 30);
+        g.drawString("p - pause", 286, 30);
         
-        if(!running){
-            g.drawImage(new SpriteSheet("/irgame/res/textures/GameOver_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
-            System.out.println("asd");
+        if (paused){
+            g.drawImage(new SpriteSheet("/irgame/res/textures/paused_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
+        }else if(!running){
+            g.setColor(Color.BLACK);
+            g.drawImage(new SpriteSheet("/irgame/res/textures/gameover_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
+            g.drawString("Scüre", 340, 40);
+            g.drawString(elapsedMinutes + " : " + elapsedSeconds + " : " + elapsedMilliSeconds, 302, 60);
+            if (newHighScore){
+                g.setColor(Color.RED);
+                g.drawString("New High Scüre", 262, 90);
+                g.drawString(elapsedMinutes + " : " + elapsedSeconds + " : " + elapsedMilliSeconds, 303, 110);
+            }else {
+                g.drawString("High Scüre", 300, 90);
+                g.drawString(highScore, 303, 110);
+            }   
         }
         
         g.dispose();
@@ -435,5 +481,58 @@ public class Game extends Canvas implements Runnable {
         game.frame.setVisible(true);
         
         game.start();
+    }
+    
+    public void initialize(){
+        lastTime = System.nanoTime();
+        timer = System.currentTimeMillis();
+        delta = 0;
+        
+        startTimeMS = System.currentTimeMillis();
+        startTimeS = System.currentTimeMillis();
+        startTimeM = System.currentTimeMillis();   
+        
+        updates = 0;
+        frames = 0;
+        
+        for (int i = 0; i < ground.length; i++){
+            yCoordinates[i] = 1;
+            ground[i] = new Ground(0, 0, i, yCoordinates[i]);
+            groundFill[i] = new Ground(4, 0, i, yCoordinates[i]-1);
+            groundFill[21+i] = new Ground(4, 0, i, yCoordinates[i]-2);
+        }
+        
+        chaR = new irgame.object.Character();
+    }
+    
+    public void groundSetYPos(int prevG2, int prevG, int curG){
+        switch(yCoordinates[prevG]){
+            case 1:
+                if(yCoordinates[prevG2] == 2){
+                    yCoordinates[curG] = 1; 
+                }else {
+                    yCoordinates[curG] = (int)(Math.random() * 2 + 1);
+                }
+                
+                break;
+                
+            case 2:
+                if(yCoordinates[prevG2] != 2){
+                    yCoordinates[curG] = 2; 
+                }else {
+                    yCoordinates[curG] = (int)(Math.random() * 3 + 1);
+                }
+                
+                break;
+                
+            case 3:
+                if(yCoordinates[prevG2] != 3){
+                    yCoordinates[curG] = 3;   
+                }else {
+                    yCoordinates[curG] = (int)(Math.random() * 2 + 2);
+                }
+                
+                break;
+        }
     }
 }
