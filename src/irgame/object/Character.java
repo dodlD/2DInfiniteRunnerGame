@@ -15,17 +15,12 @@ import java.awt.Rectangle;
  * @author lkpit11dljo
  */
 public class Character{
-    //public static final int SPRITE_SIZE = 32;
-    //public static final int WIDTH = 32;
-    //public static final int HEIGHT = 64;
     public static final int WIDTH = 47;
     public static final int HEIGHT = 62;
     public static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png");
-    //public static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/tempCharSpriteSheet.png");
     public Image BODY = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);
-    //public Image BODY = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);
     private final int START_X_POS = Game.WIDTH / 2 - Ground.WIDTH;
-    private final int START_Y_POS = Game.HEIGHT / 2;
+    private final int START_Y_POS = Game.HEIGHT / 2 - HEIGHT;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
     public int HORIZ_VEL = 0;

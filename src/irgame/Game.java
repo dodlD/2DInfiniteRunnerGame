@@ -5,6 +5,7 @@ import irgame.input.Keyboard;
 import irgame.object.Character;
 import irgame.object.Ground;
 import irgame.physics.Collision;
+import irgame.sound.Sound;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -48,6 +49,7 @@ public class Game extends Canvas implements Runnable {
     public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
     int[] yCoordinates = new int[ground.length];
     public static Character chaR;
+    public static Sound sound = new Sound("/irgame/res/sounds/kludd.wav");
     private int anim = 0;
     
     public static int gravity = 4;
@@ -225,6 +227,7 @@ public class Game extends Canvas implements Runnable {
         
         //What happens when the character is outside the grapichal area
         if (chaR.xPos < 0){
+            sound.stop();
             int newHS = Integer.parseInt(elapsedMinutes +""+ elapsedSeconds +""+ elapsedMilliSeconds);
             String content;
             int prevHS = 0;
@@ -430,10 +433,10 @@ public class Game extends Canvas implements Runnable {
             g.drawImage(ground[i].sprite[ground[i].spriteXPos/32], ground[i].xPos, ground[i].yPos, null);
             g.drawImage(groundFill[i].sprite[4], groundFill[i].xPos, groundFill[i].yPos, null);
             g.drawImage(groundFill[21+i].sprite[4], groundFill[21+i].xPos, groundFill[21+i].yPos, null);
-            g.setColor(Color.red);                                       //
-            g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
-                    ground[i].hitBox.width, ground[i].hitBox.height);    //
-            g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
+            //g.setColor(Color.red);                                       //
+            //g.drawRect(ground[i].hitBox.x, ground[i].hitBox.y,           //Hitbox
+            //        ground[i].hitBox.width, ground[i].hitBox.height);    //
+            //g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
         }
         
         //Character rendering
@@ -503,6 +506,7 @@ public class Game extends Canvas implements Runnable {
         }
         
         chaR = new irgame.object.Character();
+        sound.loop();
     }
     
     public void groundSetYPos(int prevG2, int prevG, int curG){
