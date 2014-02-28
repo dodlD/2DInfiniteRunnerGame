@@ -46,13 +46,12 @@ public class Game extends Canvas implements Runnable {
     private String elapsedSeconds = "1";
     private String elapsedMinutes = "1";
     
-    public static Ground[] ground = new Ground[WIDTH / 32 + 1];
-    public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
-    public static Obstacle[] obstacle = new Obstacle[5];
-    public static int yCoordinates[] = new int[ground.length];
+    public static final Ground[] ground = new Ground[WIDTH / 32 + 1];
+    public static final Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
+    public static final Obstacle[] obstacle = new Obstacle[ground.length/3];
+    public static final int yCoordinates[] = new int[ground.length];
     public static Character chaR;
     public static Sound sound = new Sound("/irgame/res/sounds/kludd.wav");
-    private int anim = 0;
     
     public static int gravity = 4;
     private int jump = 0;
@@ -228,7 +227,7 @@ public class Game extends Canvas implements Runnable {
         }
         
         //What happens when the character is outside the grapichal area
-        if (chaR.xPos < 0 || Game.chaR.Intersect(Game.obstacle[i].hitBox)){
+        if (chaR.xPos < 0 || Collision.deadCheck()){
             sound.stop();
             int newHS = Integer.parseInt(elapsedMinutes +""+ elapsedSeconds +""+ elapsedMilliSeconds);
             String content;
@@ -340,7 +339,7 @@ public class Game extends Canvas implements Runnable {
                 }
 
                 //The ground the character is running on
-                ground[i].xPos -= ground[0].HORIZ_VEL;
+                ground[i].xPos -= ground[i].HORIZ_VEL;
                 ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
 
                 //The filling ground 
@@ -348,8 +347,20 @@ public class Game extends Canvas implements Runnable {
                 groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
                 groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
                 groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+                
+                
             }
-
+            
+            //Obstacles moving
+            for (int i = 0; i < obstacle.length; i++){
+                obstacle[i].xPos -= ground[0].HORIZ_VEL;
+                obstacle[i].hitBox.setLocation(obstacle[i].xPos, obstacle[i].yPos);
+                if (obstacle[i].xPos <= -obstacle[i].WIDTH){
+                    
+                }
+                
+            }
+            
             for (int i = 0; i < ground.length; i++){
                 if (i == 0){
                     if (yCoordinates[i] <= yCoordinates[20]){
@@ -441,6 +452,10 @@ public class Game extends Canvas implements Runnable {
             //g.drawString(""+(i+1), ground[i].xPos+10, ground[i].yPos+20);//Number
         }
         
+        //Obstacle rendering
+        for (int i = 0; i < obstacle.length; i++){
+            g.drawImage(obstacle[i].sprite, obstacle[i].xPos, obstacle[i].yPos, null);
+        }
         //Character rendering
         g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos, null);
         //g.setColor(Color.red);                                      //Hitbox
@@ -505,6 +520,13 @@ public class Game extends Canvas implements Runnable {
             ground[i] = new Ground(0, 0, i, yCoordinates[i]);
             groundFill[i] = new Ground(4, 0, i, yCoordinates[i]-1);
             groundFill[21+i] = new Ground(4, 0, i, yCoordinates[i]-2);
+        }
+        
+        for (int i = 0; i < obstacle.length; i++){
+            int r = (int)(Math.random() * (ground.length - 1) + 1);
+            System.out.println(r);
+            obstacle[i] = new Obstacle(0, 0, ground[r].xPos + (ground[r].WIDTH - obstacle[i].WIDTH)/2, ground[r].yPos);
+            System.out.println(ground[r].xPos + (ground[r].WIDTH - obstacle[i].WIDTH)/2);
         }
         
         chaR = new irgame.object.Character();

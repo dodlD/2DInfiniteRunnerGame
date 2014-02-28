@@ -63,6 +63,15 @@ public class Collision {
                     }
                     break;
             }
-        }  
+        }
+    }
+    public static boolean deadCheck(){
+        boolean dead = false;
+        for (int i = 0; i < Game.obstacle.length; i++){
+            if (Game.chaR.Intersect(Game.obstacle[i].hitBox)){
+                dead = true;
+            }
+        }
+        return dead; 
     }
 }
