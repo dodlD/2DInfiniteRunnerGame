@@ -12,7 +12,7 @@ public class Collision {
             //System.out.println(Game.chaR.state);
             switch (Game.chaR.state){
                 case "walking":
-                    if (Game.chaR.Intersect(Game.ground[i].hitBox) ){
+                    if (Game.chaR.Intersect(Game.ground[i].hitBox)){
                         if ((Game.HEIGHT - Game.ground[i].yPos) / 32  > 1){
                             if (Game.chaR.yPos + Game.chaR.HEIGHT > Game.ground[i].yPos + 4){
                                 Game.chaR.xPos -= Game.ground[i].HORIZ_VEL + Game.chaR.HORIZ_VEL;

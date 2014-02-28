@@ -4,6 +4,7 @@ import irgame.graphics.SpriteSheet;
 import irgame.input.Keyboard;
 import irgame.object.Character;
 import irgame.object.Ground;
+import irgame.object.Obstacle;
 import irgame.physics.Collision;
 import irgame.sound.Sound;
 
@@ -47,7 +48,8 @@ public class Game extends Canvas implements Runnable {
     
     public static Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
-    int[] yCoordinates = new int[ground.length];
+    public static Obstacle[] obstacle = new Obstacle[5];
+    public static int yCoordinates[] = new int[ground.length];
     public static Character chaR;
     public static Sound sound = new Sound("/irgame/res/sounds/kludd.wav");
     private int anim = 0;
@@ -226,7 +228,7 @@ public class Game extends Canvas implements Runnable {
         }
         
         //What happens when the character is outside the grapichal area
-        if (chaR.xPos < 0){
+        if (chaR.xPos < 0 || Game.chaR.Intersect(Game.obstacle[i].hitBox)){
             sound.stop();
             int newHS = Integer.parseInt(elapsedMinutes +""+ elapsedSeconds +""+ elapsedMilliSeconds);
             String content;

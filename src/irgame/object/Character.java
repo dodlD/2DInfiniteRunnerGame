@@ -8,7 +8,6 @@ import irgame.Game;
 import irgame.graphics.SpriteSheet;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.Rectangle;
 
 /**
  *

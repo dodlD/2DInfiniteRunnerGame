@@ -36,7 +36,6 @@ public class Ground{
             sprite[i] = sheet.img.getSubimage(i*WIDTH, this.spriteYPos, WIDTH, HEIGHT);
         }
         
-        //sprite = sheet.img.getSubimage(this.spriteXPos, this.spriteYPos, WIDTH, HEIGHT);
         xPos = startXPos * WIDTH;
         yPos = Game.HEIGHT - startYPos * HEIGHT;
         hitBox = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
