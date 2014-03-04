@@ -5,7 +5,7 @@ import irgame.input.Keyboard;
 import irgame.object.Character;
 import irgame.object.Ground;
 import irgame.object.Obstacle;
-import irgame.physics.Collision;
+import irgame.collision.Collision;
 import irgame.sound.Sound;
 
 import java.awt.Canvas;
@@ -13,7 +13,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,8 +23,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileSystemView;
@@ -48,13 +52,16 @@ public class Game extends Canvas implements Runnable {
     
     public static final Ground[] ground = new Ground[WIDTH / 32 + 1];
     public static final Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
-    public static final Obstacle[] obstacle = new Obstacle[ground.length/3];
+    //public static final Obstacle[] obstacle = new Obstacle[ground.length/7 + 1];
+    public static ArrayList<Obstacle> obstacle;
     public static final int yCoordinates[] = new int[ground.length];
     public static Character chaR;
-    public static Sound sound = new Sound("/irgame/res/sounds/kludd.wav");
+    public static Sound sound;
+    public static BufferedImage bG;
     
     public static int gravity = 4;
     private int jump = 0;
+    private int level = 1;
     
     //Gets the "My Documents" path
     private final JFileChooser jfc = new JFileChooser();
@@ -97,12 +104,14 @@ public class Game extends Canvas implements Runnable {
         if (!gameDir.exists()){
             gameDir.mkdirs();
         }
-        if(!highScoreDir.exists()){
-            try {
-            fw = new FileWriter(highScoreDir);
-            } catch (IOException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        
+        try {
+            if(!highScoreDir.exists()){
+                fw = new FileWriter(highScoreDir);
             }
+            bG = ImageIO.read(getClass().getResource("/irgame/res/textures/bg_img.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
@@ -197,12 +206,14 @@ public class Game extends Canvas implements Runnable {
             if (chaR.state.equals("walking") || chaR.state.equals("jumping")){ //If the character is standing or jumping
                 if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){ //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
                     chaR.yPos -= chaR.JUMP_FORCE + gravity;
-                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.headHitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.bodyHitBox.setLocation(chaR.xPos + 12, chaR.yPos + 45);
                     chaR.state = "jumping";
                     jump++;
                 }else {
                     jump = 0;
-                    chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.headHitBox.setLocation(chaR.xPos, chaR.yPos);
+                    chaR.bodyHitBox.setLocation(chaR.xPos + 12, chaR.yPos + 45);
                     chaR.state = "falling";
                 }
             }
@@ -212,11 +223,13 @@ public class Game extends Canvas implements Runnable {
         if (key.left){
             chaR.xPos -= ground[0].HORIZ_VEL;
             chaR.HORIZ_VEL = -2;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+            chaR.headHitBox.setLocation(chaR.xPos, chaR.yPos);
+            chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
         }else if (key.right){
             chaR.xPos += ground[0].HORIZ_VEL; 
             chaR.HORIZ_VEL = 2;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+            chaR.headHitBox.setLocation(chaR.xPos, chaR.yPos);
+            chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
         }else{
             chaR.HORIZ_VEL = 0;
         }
@@ -288,31 +301,17 @@ public class Game extends Canvas implements Runnable {
             }
             
             chaR.yPos += gravity;
-            chaR.hitBox.setLocation(chaR.xPos, chaR.yPos);
+            chaR.headHitBox.setLocation(chaR.xPos + 8, chaR.yPos);
+            chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
+            
             
             //Ground moving
             for (int i = 0; i < ground.length; i++){
-                switch (Integer.parseInt(elapsedMinutes)){
-                    case 1:
-                        ground[i].HORIZ_VEL = 3;
-                        groundFill[i].HORIZ_VEL = 3;
-                        groundFill[21+i].HORIZ_VEL = 3;
-                        break;
-                    case 2:
-                        ground[i].HORIZ_VEL = 4;
-                        groundFill[i].HORIZ_VEL = 4;
-                        groundFill[21+i].HORIZ_VEL = 4;
-                        break;
-                    case 3:
-                        ground[i].HORIZ_VEL = 5;
-                        groundFill[i].HORIZ_VEL = 5;
-                        groundFill[21+i].HORIZ_VEL = 5;
-                        break;
-                    case 4:
-                        ground[i].HORIZ_VEL = 6;
-                        groundFill[i].HORIZ_VEL = 6;
-                        groundFill[21+i].HORIZ_VEL = 6;
-                        break;
+                if(Integer.parseInt(elapsedMinutes) == level){
+                    ground[i].HORIZ_VEL++;
+                    groundFill[i].HORIZ_VEL++;
+                    groundFill[21+i].HORIZ_VEL++;
+                    level++;
                 }
 
                 if (ground[i].xPos <= -ground[i].WIDTH){
@@ -336,6 +335,23 @@ public class Game extends Canvas implements Runnable {
                     groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (yCoordinates[i]-2);
                     groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
                     groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+                    
+                    for (int x = 0; x < obstacle.size(); x++){
+                        if (obstacle.get(x).xPos <= -obstacle.get(x).WIDTH && obstacle.size() > 2){
+                            obstacle.remove(x);
+                        }
+                        int r = (int)(Math.random() * 99 + 1);
+                        if (x == 0){
+                            if (r > 95 && obstacle.get(obstacle.size()-1).xPos + ground[i].WIDTH * 4 < ground[i].xPos){
+                                obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(0).WIDTH)/2, ground[i].yPos - 1));
+                            }
+                        }else {
+                            if (r > 95 && obstacle.get(x-1).xPos + ground[i].WIDTH * 4 < ground[i].xPos){
+                                obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(x).WIDTH)/2, ground[i].yPos - 1));
+                            }
+                        }
+                    }
+                    
                 }
 
                 //The ground the character is running on
@@ -352,13 +368,9 @@ public class Game extends Canvas implements Runnable {
             }
             
             //Obstacles moving
-            for (int i = 0; i < obstacle.length; i++){
-                obstacle[i].xPos -= ground[0].HORIZ_VEL;
-                obstacle[i].hitBox.setLocation(obstacle[i].xPos, obstacle[i].yPos);
-                if (obstacle[i].xPos <= -obstacle[i].WIDTH){
-                    
-                }
-                
+            for (int i = 0; i < obstacle.size(); i++){
+                obstacle.get(i).xPos -= ground[0].HORIZ_VEL;
+                obstacle.get(i).hitBox.setLocation(obstacle.get(i).xPos, obstacle.get(i).yPos);    
             }
             
             for (int i = 0; i < ground.length; i++){
@@ -409,20 +421,32 @@ public class Game extends Canvas implements Runnable {
             switch (chaR.state){
                 case "walking":
                     if (updates == 5 || updates == 25 || updates == 45){
-                        chaR.BODY = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.sprite = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.bodyHitBox.setBounds(chaR.xPos + 11, chaR.yPos + 45, 36, 17);
+                        //chaR.setBodyHitBox(chaR.xPos + 11, chaR.yPos + 45, 36, 17);
                     }else if (updates == 10 || updates == 30 || updates == 50){
-                        chaR.BODY = chaR.sheet.img.getSubimage(1*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.sprite = chaR.sheet.img.getSubimage(1*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.bodyHitBox.setBounds(chaR.xPos + 8, chaR.yPos + 45, 37, 17);
+                        //chaR.setBodyHitBox(chaR.xPos + 8, chaR.yPos + 45, 37, 18);
                     }else if (updates == 15 || updates == 35 || updates == 55){
-                        chaR.BODY = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.sprite = chaR.sheet.img.getSubimage(0*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.bodyHitBox.setBounds(chaR.xPos + 11, chaR.yPos + 45, 36, 17);
+                        //chaR.setBodyHitBox(chaR.xPos + 11, chaR.yPos + 45, 36, 17);
                     }else if (updates == 20 || updates == 40 || updates == 60){
-                        chaR.BODY = chaR.sheet.img.getSubimage(2*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.sprite = chaR.sheet.img.getSubimage(2*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                        chaR.bodyHitBox.setBounds(chaR.xPos + 5, chaR.yPos + 45, 37, 17);
+                        //chaR.setBodyHitBox(chaR.xPos + 5, chaR.yPos + 45, 37, 18);
                     }
                     break;
                 case "jumping":
-                    chaR.BODY = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    chaR.sprite = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    chaR.bodyHitBox.setBounds(chaR.xPos + 12, chaR.yPos + 45, 35, 21);
+                    //chaR.setBodyHitBox(chaR.xPos + 12, chaR.yPos + 45, 35, 21);
                     break;
                 case "falling":
-                    chaR.BODY = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    chaR.sprite = chaR.sheet.img.getSubimage(3*chaR.WIDTH, 0, chaR.WIDTH, chaR.HEIGHT);
+                    chaR.bodyHitBox.setBounds(chaR.xPos + 12, chaR.yPos + 45, 35, 21);
+                    //chaR.setBodyHitBox(chaR.xPos + 12, chaR.yPos + 45, 35, 21);
                     break;
             }
             
@@ -438,8 +462,12 @@ public class Game extends Canvas implements Runnable {
         }
         
         Graphics g = bs.getDrawGraphics();
-        g.setColor(Color.DARK_GRAY);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        //g.setColor(Color.DARK_GRAY);
+        //g.fillRect(0, 0, getWidth(), getHeight());
+        
+        g.drawImage(bG, 0, 0, null);
+
+
         
         //Ground rendering
         for (int i = 0; i < ground.length; i++){
@@ -453,13 +481,16 @@ public class Game extends Canvas implements Runnable {
         }
         
         //Obstacle rendering
-        for (int i = 0; i < obstacle.length; i++){
-            g.drawImage(obstacle[i].sprite, obstacle[i].xPos, obstacle[i].yPos, null);
+        for (int i = 0; i < obstacle.size(); i++){
+            g.drawImage(obstacle.get(i).sprite, obstacle.get(i).xPos, obstacle.get(i).yPos, null);
+            g.setColor(Color.red);
+            g.drawRect(obstacle.get(i).hitBox.x, obstacle.get(i).hitBox.y, obstacle.get(i).hitBox.width, obstacle.get(i).hitBox.height);
         }
         //Character rendering
-        g.drawImage(chaR.BODY, chaR.xPos, chaR.yPos, null);
-        //g.setColor(Color.red);                                      //Hitbox
-        //g.drawRect(chaR.hitBox.x, chaR.hitBox.y, chaR.hitBox.width, chaR.hitBox.height);  //
+        g.drawImage(chaR.sprite, chaR.xPos, chaR.yPos, null);
+        g.setColor(Color.red);                                      //Hitbox
+        g.drawRect(chaR.headHitBox.x, chaR.headHitBox.y, chaR.headHitBox.width, chaR.headHitBox.height);  //
+        g.drawRect(chaR.bodyHitBox.x, chaR.bodyHitBox.y, chaR.bodyHitBox.width, chaR.bodyHitBox.height);
         
         //Time rendering
         g.setColor(Color.WHITE);
@@ -521,15 +552,12 @@ public class Game extends Canvas implements Runnable {
             groundFill[i] = new Ground(4, 0, i, yCoordinates[i]-1);
             groundFill[21+i] = new Ground(4, 0, i, yCoordinates[i]-2);
         }
-        
-        for (int i = 0; i < obstacle.length; i++){
-            int r = (int)(Math.random() * (ground.length - 1) + 1);
-            System.out.println(r);
-            obstacle[i] = new Obstacle(0, 0, ground[r].xPos + (ground[r].WIDTH - obstacle[i].WIDTH)/2, ground[r].yPos);
-            System.out.println(ground[r].xPos + (ground[r].WIDTH - obstacle[i].WIDTH)/2);
-        }
+        int r = (int)(Math.random() * ground.length/3 + 2*ground.length/3);
+        obstacle = new ArrayList<Obstacle>();
+        obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH), ground[r].yPos));
         
         chaR = new irgame.object.Character();
+        sound = new Sound("/irgame/res/sounds/kludd.wav");
         sound.loop();
     }
     
