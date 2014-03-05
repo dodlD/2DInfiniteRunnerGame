@@ -186,11 +186,7 @@ public class Game extends Canvas implements Runnable {
             
             while(!running){
                 key.update();
-                /*if (paused && key.u){
-                    running = true;
-                    paused = false;
-                }*/
-                if (/*!paused && */key.r){
+                if (key.r){
                     newHighScore = false;
                     running = true;
                     initialize();
@@ -336,19 +332,14 @@ public class Game extends Canvas implements Runnable {
                     groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
                     groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
                     
+                    int r = (int)(Math.random() * 9 + 1);
+                    if (r > 9 && obstacle.get(obstacle.size()-1).xPos + ground[i].WIDTH*4 < ground[i].xPos){
+                        obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(obstacle.size()-1).WIDTH)/2, ground[i].yPos - 1));
+                    }
+                    
                     for (int x = 0; x < obstacle.size(); x++){
-                        if (obstacle.get(x).xPos <= -obstacle.get(x).WIDTH && obstacle.size() > 2){
+                        if (obstacle.get(x).xPos <= -obstacle.get(x).WIDTH && obstacle.size() > 1){
                             obstacle.remove(x);
-                        }
-                        int r = (int)(Math.random() * 99 + 1);
-                        if (x == 0){
-                            if (r > 95 && obstacle.get(obstacle.size()-1).xPos + ground[i].WIDTH * 4 < ground[i].xPos){
-                                obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(0).WIDTH)/2, ground[i].yPos - 1));
-                            }
-                        }else {
-                            if (r > 95 && obstacle.get(x-1).xPos + ground[i].WIDTH * 4 < ground[i].xPos){
-                                obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(x).WIDTH)/2, ground[i].yPos - 1));
-                            }
                         }
                     }
                     
@@ -483,14 +474,14 @@ public class Game extends Canvas implements Runnable {
         //Obstacle rendering
         for (int i = 0; i < obstacle.size(); i++){
             g.drawImage(obstacle.get(i).sprite, obstacle.get(i).xPos, obstacle.get(i).yPos, null);
-            g.setColor(Color.red);
-            g.drawRect(obstacle.get(i).hitBox.x, obstacle.get(i).hitBox.y, obstacle.get(i).hitBox.width, obstacle.get(i).hitBox.height);
+            //g.setColor(Color.red);
+            //g.drawRect(obstacle.get(i).hitBox.x, obstacle.get(i).hitBox.y, obstacle.get(i).hitBox.width, obstacle.get(i).hitBox.height);
         }
         //Character rendering
         g.drawImage(chaR.sprite, chaR.xPos, chaR.yPos, null);
-        g.setColor(Color.red);                                      //Hitbox
-        g.drawRect(chaR.headHitBox.x, chaR.headHitBox.y, chaR.headHitBox.width, chaR.headHitBox.height);  //
-        g.drawRect(chaR.bodyHitBox.x, chaR.bodyHitBox.y, chaR.bodyHitBox.width, chaR.bodyHitBox.height);
+        //g.setColor(Color.red);                                      //Hitbox
+        //g.drawRect(chaR.headHitBox.x, chaR.headHitBox.y, chaR.headHitBox.width, chaR.headHitBox.height);  //
+        //g.drawRect(chaR.bodyHitBox.x, chaR.bodyHitBox.y, chaR.bodyHitBox.width, chaR.bodyHitBox.height);
         
         //Time rendering
         g.setColor(Color.WHITE);
@@ -504,7 +495,7 @@ public class Game extends Canvas implements Runnable {
             g.drawImage(new SpriteSheet("/irgame/res/textures/paused_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
         }else if(!running){
             g.setColor(Color.BLACK);
-            g.drawImage(new SpriteSheet("/irgame/res/textures/gameover_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
+            g.drawImage(new SpriteSheet("/irgame/res/textures/game_over_img.png").img.getSubimage(0, 0, getWidth(), getHeight()), 0, 0, null);
             g.drawString("Scüre", 340, 40);
             g.drawString(elapsedMinutes + " : " + elapsedSeconds + " : " + elapsedMilliSeconds, 302, 60);
             if (newHighScore){
@@ -514,7 +505,7 @@ public class Game extends Canvas implements Runnable {
             }else {
                 g.drawString("High Scüre", 300, 90);
                 g.drawString(highScore, 303, 110);
-            }   
+            } 
         }
         
         g.dispose();
@@ -554,7 +545,7 @@ public class Game extends Canvas implements Runnable {
         }
         int r = (int)(Math.random() * ground.length/3 + 2*ground.length/3);
         obstacle = new ArrayList<Obstacle>();
-        obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH), ground[r].yPos));
+        obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH)/2, ground[r].yPos));
         
         chaR = new irgame.object.Character();
         sound = new Sound("/irgame/res/sounds/kludd.wav");
