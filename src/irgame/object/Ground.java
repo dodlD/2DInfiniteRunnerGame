@@ -142,7 +142,8 @@ public class Ground{
     
     public static boolean newLvl(int time, int level){
         boolean nL = false;
-        if(time == level){
+        System.out.println(time);
+        if(time == level*30 || level != 1 && time == 0){
             nL = true;    
         }
         return nL;

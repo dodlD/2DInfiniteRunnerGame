@@ -258,6 +258,7 @@ public class Game extends Canvas implements Runnable {
                 }
             }
             
+            //Formats the time that will be shown for the user.
             switch(Integer.toString(prevHS).length()){
                 case 0:
                     highScore = "00 : 00 : 00";
@@ -299,7 +300,7 @@ public class Game extends Canvas implements Runnable {
             
             //Ground moving
             for (int i = 0; i < ground.length; i++){
-                if(Ground.newLvl(Integer.parseInt(elapsedMinutes), level)){
+                if(Ground.newLvl(Integer.parseInt(elapsedSeconds), level)){
                     ground[i].HORIZ_VEL++;
                     groundFill[i].HORIZ_VEL++;
                     groundFill[21+i].HORIZ_VEL++;
@@ -460,7 +461,7 @@ public class Game extends Canvas implements Runnable {
             groundFill[21+i] = new Ground(4, 0, i, Ground.yCoordinates[i]-2);
         }
         
-        int r = (int)(Math.random() * ground.length/3 + 2*ground.length/3);
+        int r = (int)((Math.random() * (ground.length/3 - 4))  + (2*ground.length/3 + 4));
         obstacle = new ArrayList<Obstacle>();
         obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH)/2, ground[r].yPos));
         
