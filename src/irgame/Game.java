@@ -40,7 +40,6 @@ public class Game extends Canvas implements Runnable {
     private JFrame frame;
     private Keyboard key;
     private boolean running = false;
-    private boolean paused = false; 
     private String elapsedMilliSeconds = "1";
     private String elapsedSeconds = "1";
     private String elapsedMinutes = "1";
@@ -49,11 +48,14 @@ public class Game extends Canvas implements Runnable {
     private static final Ground[] groundFill = new Ground[(WIDTH / 32 + 1) * 2];
     public static ArrayList<Obstacle> obstacle;
     public static Character chaR;
-    public static Sound sound;
-    public static BufferedImage bG, pausedImg, gameOverImg;
+    public static Sound music;
+    public static Sound jump;
+    public static Sound die;
+    public static Sound dead;
+    public static BufferedImage bG, gameOverImg;
     
     public static int gravity = 4;
-    private int jump = 0;
+    private int jumpCount = 0;
     private int level = 1;
     
     //Gets the "My Documents" path
@@ -103,11 +105,13 @@ public class Game extends Canvas implements Runnable {
                 fw = new FileWriter(highScoreDir);
             }
             bG = ImageIO.read(getClass().getResource("/irgame/res/textures/bg_img.png"));   //Gets the background image for the game.
-            pausedImg = ImageIO.read(getClass().getResource("/irgame/res/textures/paused_img.png"));    //Gets the image showed when the game is paused.
             gameOverImg = ImageIO.read(getClass().getResource("/irgame/res/textures/game_over_img.png"));   //Gets the image showed when the game lost.
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        jump = new Sound("/irgame/res/sounds/jump.wav");
+        die = new Sound("/irgame/res/sounds/die.wav");
         
     }
     
@@ -182,6 +186,7 @@ public class Game extends Canvas implements Runnable {
             while(!running){    //If the player lost this loop will start.
                 key.update();   //Explained in the Keyboard class.
                 if (key.r){ //If the player presses "r" the game will restart.
+                    dead.stop();
                     newHighScore = false;
                     running = true;
                     initialize();   //Explained further down.
@@ -194,15 +199,21 @@ public class Game extends Canvas implements Runnable {
     public void update(){   //Handles the locical parts of the game.
         key.update();   //Explained in the Keyboard class
         if (key.up || chaR.state.equals("jumping")){                            //If the up-key is pressed or the character is already moving upwards (jumping),
+            if(key.up){
+                
+            }
             if (chaR.state.equals("walking") || chaR.state.equals("jumping")){  //and if the character is standing or jumping
-                if (jump < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){                 //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
+                if (jumpCount < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){                 //and if the current height is less than above the ground is less than the height you can jump, the current height will increase.
+                    if(jumpCount == 0){
+                        jump.play();
+                    }
                     chaR.yPos -= chaR.JUMP_FORCE + gravity;
                     chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
                     chaR.bodyHitBox.setLocation(chaR.xPos + 12, chaR.yPos + 45);
                     chaR.state = "jumping";
-                    jump++;
+                    jumpCount++;
                 }else {
-                    jump = 0;
+                    jumpCount = 0;
                     chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
                     chaR.bodyHitBox.setLocation(chaR.xPos + 12, chaR.yPos + 45);
                     chaR.state = "falling";
@@ -225,14 +236,11 @@ public class Game extends Canvas implements Runnable {
             chaR.HORIZ_VEL = 0;
         }
         
-        if (key.p){
-            paused = true;
-            //running = false;
-        }
-        
         //What happens when the character is outside the grapichal area
         if (chaR.xPos < 0 || chaR.dead(obstacle)){
-            sound.stop();
+            die.play();
+            music.stop();
+            dead.loop();
             int newHS = Integer.parseInt(elapsedMinutes +""+ elapsedSeconds +""+ elapsedMilliSeconds);
             String content;
             int prevHS = 0;
@@ -284,10 +292,6 @@ public class Game extends Canvas implements Runnable {
             }
             level = 1;
             running = false;
-        }else if (paused){
-            if (key.u){
-                paused = false;
-            }
         }else {
             if (chaR.outOfArea()){  //Prevents the player from running out of the windowarea
                 chaR.xPos -= Game.chaR.HORIZ_VEL;;
@@ -327,7 +331,7 @@ public class Game extends Canvas implements Runnable {
                     
                     //Creating new obstacles
                     int r = (int)(Math.random() * 10 + 1);
-                    if (Obstacle.newObstacle(obstacle, ground, r, i)){
+                    if (Obstacle.newObstacle(obstacle, ground, level, r, i)){
                         obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(obstacle.size()-1).WIDTH)/2, ground[i].yPos - 1));
                     }
                     
@@ -406,11 +410,9 @@ public class Game extends Canvas implements Runnable {
         g.drawString(elapsedMinutes + " : " + elapsedSeconds + " : " + elapsedMilliSeconds, 550, 30);
         
         //Text rendering
-        g.drawString("p - pause", 286, 30);
+        //g.drawString("p - pause", 286, 30);
         
-        if (paused){
-            g.drawImage(pausedImg, 0, 0, null);
-        }else if(!running){
+        if(!running){
             g.setColor(Color.BLACK);
             g.drawImage(gameOverImg, 0, 0, null);
             g.drawString("Scüre", 340, 40);
@@ -466,7 +468,8 @@ public class Game extends Canvas implements Runnable {
         obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH)/2, ground[r].yPos));
         
         chaR = new irgame.object.Character();
-        sound = new Sound("/irgame/res/sounds/kludd.wav");
-        sound.loop();
+        music = new Sound("/irgame/res/sounds/music.wav");
+        dead = new Sound("/irgame/res/sounds/dead.wav");
+        music.loop();
     }
 }

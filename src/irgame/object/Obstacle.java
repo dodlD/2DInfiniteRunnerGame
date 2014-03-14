@@ -36,9 +36,9 @@ public class Obstacle{
         } 
     }
     
-    public static boolean newObstacle(ArrayList<Obstacle> o, Ground[] grnd, int r, int i){
+    public static boolean newObstacle(ArrayList<Obstacle> o, Ground[] grnd, int level, int r, int i){
         boolean nO = false;
-        if (r > 9 && o.get(o.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
+        if (r > 10-level && o.get(o.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
             nO = true;
         }
         return nO;
