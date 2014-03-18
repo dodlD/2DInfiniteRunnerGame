@@ -26,7 +26,7 @@ public class Ground{
     public int yPos;
     public int HORIZ_VEL = 2;
     public Rectangle hitBox;
-    public static final int yCoordinates[] = new int[Game.ground.length];
+    public static final int yCoordinates[] = new int[Game.GROUND.length];
     
     public Ground(int spriteXPos, int spriteYPos, int startXPos, int startYPos){    //The constructor that sets the starting position and sprite for the ground.   
         this.spriteXPos = spriteXPos * WIDTH;

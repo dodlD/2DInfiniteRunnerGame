@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileSystemView;
@@ -32,9 +33,10 @@ import javax.swing.filechooser.FileSystemView;
 public class Game extends Canvas implements Runnable {   
     private static final long serialVersionUID = 1L;
     
+    private static final ImageIcon ICON = new ImageIcon(Game.class.getResource("/irgame/res/textures/icon.png"));
     private static final String GAMETITLE = "Wüüd teh Würm";
     public static final int WIDTH = 640;
-    public static final int HEIGHT = WIDTH * 9 / 16;    //16:9 aspect ratio
+    public static final int HEIGHT = WIDTH * 9 / 16;    //16:9 aspect ratio.
     
     private Thread thread;
     private JFrame frame;
@@ -42,48 +44,48 @@ public class Game extends Canvas implements Runnable {
     private boolean running = false;
     
     //Gets the "My Documents" path
-    private final FileSystemView fsv = new JFileChooser().getFileSystemView();
+    private final FileSystemView FSV = new JFileChooser().getFileSystemView();
     
     //The path of the game directory and the highscore.txt file, where the highscore will be stored.
-    private final File gameDir = new File (fsv.getDefaultDirectory() + "\\" + GAMETITLE);
-    private final File highScoreDir = new File(gameDir + "\\highscore.txt");
+    private final File GAME_DIR = new File (FSV.getDefaultDirectory() + "\\" + GAMETITLE);
+    private final File HIGH_SCORE_DIR = new File(GAME_DIR + "\\highscore.txt");
     
     private FileWriter fw;
     
-    private static final int gravity = 4;
+    private static final int GRAVITY = 4;
     private static int jumpCount = 0;
     private static int level = 1;
     private boolean newHighScore = false;
     private String highScore;
     
     //Objects
-    public static final Ground[] ground = new Ground[WIDTH / Ground.WIDTH + 1]; //The ground the charater is running on.
-    private static final Ground[] groundFill = new Ground[(WIDTH / Ground.WIDTH + 1) * 2];  //Used to fill the space below the actual ground.
-    public static ArrayList<Obstacle> obstacle;
-    public static Character chaR;
+    public static final Ground[] GROUND = new Ground[WIDTH / Ground.WIDTH + 1]; //The ground the charater is running on.
+    private static final Ground[] GROUND_FILL = new Ground[(WIDTH / Ground.WIDTH + 1) * 2];  //Used to fill the space below the actual ground.
+    private static ArrayList<Obstacle> obstacle;
+    private static Character chaR;
     
     //Sound
-    public static Sound music;
-    public static Sound jump;
-    public static Sound die;
-    public static Sound dead;
+    private static Sound music;
+    private static Sound jump;
+    private static Sound die;
+    private static Sound dead;
     
-    public static BufferedImage bG, gameOverImg;
+    private static BufferedImage bG, gameOverImg;
     
     private String elapsedMilliSeconds = "1";
     private String elapsedSeconds = "1";
     private String elapsedMinutes = "1";
     
-    long lastTime = System.nanoTime();
-    long timer = System.currentTimeMillis();
-    final double ns = 1000000000.0 / 60.0;
-    double delta = 0;
-    long startTimeMS = System.currentTimeMillis();
-    long startTimeS = System.currentTimeMillis();
-    long startTimeM = System.currentTimeMillis();
+    private long lastTime = System.nanoTime();
+    private long timer = System.currentTimeMillis();
+    private final double NS = 1000000000.0 / 60.0;
+    private double delta = 0;
+    private long startTimeMS = System.currentTimeMillis();
+    private long startTimeS = System.currentTimeMillis();
+    private long startTimeM = System.currentTimeMillis();
 
-    int updates = 0;
-    int frames = 0;
+    private int updates = 0;
+    private int frames = 0;
     
     public Game(){
         //Sets the dimension of the window.
@@ -100,17 +102,18 @@ public class Game extends Canvas implements Runnable {
         running = true;
         thread = new Thread(this, "Display");
         thread.start();
-        if (!gameDir.exists()){ //Creates a directory for the game at the users "Documents"-folder if it doesn't exists.
-            gameDir.mkdirs();
+        if (!GAME_DIR.exists()){ //Creates a directory for the game at the users "Documents"-folder if it doesn't exists.
+            GAME_DIR.mkdirs();
         }
         
         try {
-            if(!highScoreDir.exists()){ //Creates a highscore.txt-file in the directory of the game if it doesn't exists.
-                fw = new FileWriter(highScoreDir);
+            if(!HIGH_SCORE_DIR.exists()){ //Creates a highscore.txt-file in the directory of the game if it doesn't exists.
+                fw = new FileWriter(HIGH_SCORE_DIR);
             }
             
             bG = ImageIO.read(getClass().getResource("/irgame/res/textures/bg_img.png"));   //Loads the background image for the game.
             gameOverImg = ImageIO.read(getClass().getResource("/irgame/res/textures/game_over_img.png"));   //Loads the image shown when the game is over.
+            
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -134,7 +137,7 @@ public class Game extends Canvas implements Runnable {
         
         while(running) {    //The game loop.
             long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
+            delta += (now - lastTime) / NS;
             lastTime = now;
             
             
@@ -179,15 +182,13 @@ public class Game extends Canvas implements Runnable {
             while (delta >= 1){
                 update();   //Explained further down.
                 updates++;
+                render();   //Explained further down.
+                frames++;
                 delta--;
             }
             
-            render();   //Explained further down.
-            frames++;
-            
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                frame.setTitle(GAMETITLE + " | " + updates + " ups, " + frames + " fps");
                 updates = 0;
                 frames = 0;
             }
@@ -201,6 +202,8 @@ public class Game extends Canvas implements Runnable {
                     running = true;
                     initialize();   //Explained further down.
                 }
+                
+                render();
             }
         }
         
@@ -216,7 +219,7 @@ public class Game extends Canvas implements Runnable {
                     if(jumpCount == 0){ 
                         jump.play();
                     }
-                    chaR.yPos -= chaR.JUMP_FORCE + gravity;
+                    chaR.yPos -= chaR.JUMP_FORCE + GRAVITY;
                     chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
                     chaR.bodyHitBox.setLocation(chaR.xPos + 12, chaR.yPos + 45);
                     chaR.state = "jumping";
@@ -232,12 +235,12 @@ public class Game extends Canvas implements Runnable {
         
         //Takes care of the characters movement back and forth.
         if (key.left){
-            chaR.xPos -= ground[0].HORIZ_VEL;
+            chaR.xPos -= GROUND[0].HORIZ_VEL;
             chaR.HORIZ_VEL = -2;
             chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
             chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
         }else if (key.right){
-            chaR.xPos += ground[0].HORIZ_VEL; 
+            chaR.xPos += GROUND[0].HORIZ_VEL; 
             chaR.HORIZ_VEL = 2;
             chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
             chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
@@ -256,7 +259,7 @@ public class Game extends Canvas implements Runnable {
             int prevHS = 0;
             
             try {
-                content = new String(Files.readAllBytes(Paths.get(highScoreDir.toString()))); //Reads the higscore.txt file.
+                content = new String(Files.readAllBytes(Paths.get(HIGH_SCORE_DIR.toString()))); //Reads the higscore.txt file.
                 if (!content.isEmpty()){
                     prevHS = Integer.parseInt(content); //Converts the content of the file to an int.
                 }
@@ -269,7 +272,7 @@ public class Game extends Canvas implements Runnable {
                 
                 //Writes the new high score to the highscore.txt file.
                 try {
-                    fw = new FileWriter(highScoreDir);
+                    fw = new FileWriter(HIGH_SCORE_DIR);
                     fw.write(Integer.toString(newS));
                     fw.close();
                 }catch (IOException iox){
@@ -308,74 +311,74 @@ public class Game extends Canvas implements Runnable {
                 chaR.xPos -= Game.chaR.HORIZ_VEL;;
             }
             
-            chaR.yPos += gravity;
+            chaR.yPos += GRAVITY;
             chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
             chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
             
             
             //The movement of the ground and creation of obstacles.
-            for (int i = 0; i < ground.length; i++){
+            for (int i = 0; i < GROUND.length; i++){
                 if(Ground.newLvl(Integer.parseInt(elapsedSeconds), level)){ //Increases the level of the game.
-                    ground[i].HORIZ_VEL++;
-                    groundFill[i].HORIZ_VEL++;
-                    groundFill[21+i].HORIZ_VEL++;
+                    GROUND[i].HORIZ_VEL++;
+                    GROUND_FILL[i].HORIZ_VEL++;
+                    GROUND_FILL[21+i].HORIZ_VEL++;
                     if (i == 20){
                         level++;
                     }
                 }
 
-                if (Ground.outOfArea(ground, i)){
+                if (Ground.outOfArea(GROUND, i)){
                     Ground.rePosY(i);
 
                     //The ground the character is running on.
-                    ground[i].yPos = Game.HEIGHT - ground[i].HEIGHT * Ground.yCoordinates[i];
-                    ground[i].xPos += getWidth() + ground[i].WIDTH;
-                    ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+                    GROUND[i].yPos = Game.HEIGHT - GROUND[i].HEIGHT * Ground.yCoordinates[i];
+                    GROUND[i].xPos += getWidth() + GROUND[i].WIDTH;
+                    GROUND[i].hitBox.setLocation(GROUND[i].xPos, GROUND[i].yPos);
 
                     //The filling ground .
-                    groundFill[i].yPos = Game.HEIGHT - groundFill[i].HEIGHT * (Ground.yCoordinates[i]-1);
-                    groundFill[i].xPos += getWidth() + groundFill[i].WIDTH;
-                    groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-                    groundFill[21+i].yPos = Game.HEIGHT - groundFill[21+i].HEIGHT * (Ground.yCoordinates[i]-2);
-                    groundFill[21+i].xPos += getWidth() + groundFill[21+i].WIDTH;
-                    groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+                    GROUND_FILL[i].yPos = Game.HEIGHT - GROUND_FILL[i].HEIGHT * (Ground.yCoordinates[i]-1);
+                    GROUND_FILL[i].xPos += getWidth() + GROUND_FILL[i].WIDTH;
+                    GROUND_FILL[i].hitBox.setLocation(GROUND_FILL[i].xPos, GROUND_FILL[i].yPos);
+                    GROUND_FILL[21+i].yPos = Game.HEIGHT - GROUND_FILL[21+i].HEIGHT * (Ground.yCoordinates[i]-2);
+                    GROUND_FILL[21+i].xPos += getWidth() + GROUND_FILL[21+i].WIDTH;
+                    GROUND_FILL[21+i].hitBox.setLocation(GROUND_FILL[21+i].xPos, GROUND_FILL[21+i].yPos);
                     
                     //The creation of new obstacles.
                     int r = (int)(Math.random() * 10 + 1);
-                    if (Obstacle.newObstacle(obstacle, ground, level, r, i)){
-                        obstacle.add(new Obstacle(WIDTH + (ground[i].WIDTH - obstacle.get(obstacle.size()-1).WIDTH)/2, ground[i].yPos - 1));
+                    if (Obstacle.newObstacle(obstacle, GROUND, level, r, i)){
+                        obstacle.add(new Obstacle(WIDTH + (GROUND[i].WIDTH - obstacle.get(obstacle.size()-1).WIDTH)/2, GROUND[i].yPos - 1));
                     }
                     
                     //Removes invisible obstacles.
                     for (int x = 0; x < obstacle.size(); x++){
-                        if (Obstacle.delObstacle(obstacle, ground, x)){
+                        if (Obstacle.delObstacle(obstacle, GROUND, x)){
                             obstacle.remove(x);
                         }
                     }
                 }
 
                 //Moves the ground the character is running on.
-                ground[i].xPos -= ground[i].HORIZ_VEL;
-                ground[i].hitBox.setLocation(ground[i].xPos, ground[i].yPos);
+                GROUND[i].xPos -= GROUND[i].HORIZ_VEL;
+                GROUND[i].hitBox.setLocation(GROUND[i].xPos, GROUND[i].yPos);
 
                 //Moves the filling ground.
-                groundFill[i].xPos -= groundFill[i].HORIZ_VEL;
-                groundFill[i].hitBox.setLocation(groundFill[i].xPos, groundFill[i].yPos);
-                groundFill[21+i].xPos -= groundFill[21+i].HORIZ_VEL;
-                groundFill[21+i].hitBox.setLocation(groundFill[21+i].xPos, groundFill[21+i].yPos);
+                GROUND_FILL[i].xPos -= GROUND_FILL[i].HORIZ_VEL;
+                GROUND_FILL[i].hitBox.setLocation(GROUND_FILL[i].xPos, GROUND_FILL[i].yPos);
+                GROUND_FILL[21+i].xPos -= GROUND_FILL[21+i].HORIZ_VEL;
+                GROUND_FILL[21+i].hitBox.setLocation(GROUND_FILL[21+i].xPos, GROUND_FILL[21+i].yPos);
                 
                 
             }
             
             //The movement of the obstacles.
             for (int i = 0; i < obstacle.size(); i++){
-                obstacle.get(i).xPos -= ground[0].HORIZ_VEL;
+                obstacle.get(i).xPos -= GROUND[0].HORIZ_VEL;
                 obstacle.get(i).hitBox.setLocation(obstacle.get(i).xPos, obstacle.get(i).yPos);    
             }
             
-            Ground.setSprite(ground);   //Explained in the Ground class.
+            Ground.setSprite(GROUND);   //Explained in the Ground class.
             
-            chaR.collision(ground, gravity);    //Explained in the Character class.
+            chaR.collision(GROUND, GRAVITY);    //Explained in the Character class.
             chaR.setSprite(updates);    //Explained in the Character class.
         }
     }
@@ -392,7 +395,7 @@ public class Game extends Canvas implements Runnable {
         g.drawImage(bG, 0, 0, null);    //Draws the background image.
 
         //The rendering of the ground.
-        Ground.render(g, ground, groundFill);   //Explained in the Ground class.
+        Ground.render(g, GROUND, GROUND_FILL);   //Explained in the Ground class.
         
         
         //The rendering of obstacles.
@@ -432,6 +435,7 @@ public class Game extends Canvas implements Runnable {
     public static void main(String[] args) {
         Game game = new Game();
         game.frame.setResizable(false);
+        game.frame.setIconImage(ICON.getImage());
         game.frame.setTitle(GAMETITLE);
         game.frame.add(game);
         game.frame.pack();
@@ -455,17 +459,17 @@ public class Game extends Canvas implements Runnable {
         frames = 0;
         
         //Creates and sets the start coordinates for the ground.
-        for (int i = 0; i < ground.length; i++){
+        for (int i = 0; i < GROUND.length; i++){
             Ground.yCoordinates[i] = 1;
-            ground[i] = new Ground(0, 0, i, Ground.yCoordinates[i]);
-            groundFill[i] = new Ground(4, 0, i, Ground.yCoordinates[i]-1);
-            groundFill[21+i] = new Ground(4, 0, i, Ground.yCoordinates[i]-2);
+            GROUND[i] = new Ground(0, 0, i, Ground.yCoordinates[i]);
+            GROUND_FILL[i] = new Ground(4, 0, i, Ground.yCoordinates[i]-1);
+            GROUND_FILL[21+i] = new Ground(4, 0, i, Ground.yCoordinates[i]-2);
         }
         
         //Creates the first obstacle.
-        int r = (int)((Math.random() * (ground.length/3 - 4))  + (2*ground.length/3 + 4));
+        int r = (int)((Math.random() * (GROUND.length/3 - 4))  + (2*GROUND.length/3 + 4));
         obstacle = new ArrayList<Obstacle>();
-        obstacle.add(new Obstacle(ground[r].xPos + (ground[r].WIDTH - Obstacle.WIDTH)/2, ground[r].yPos));
+        obstacle.add(new Obstacle(GROUND[r].xPos + (GROUND[r].WIDTH - Obstacle.WIDTH)/2, GROUND[r].yPos));
         
         //Creates the character.
         chaR = new irgame.object.Character();

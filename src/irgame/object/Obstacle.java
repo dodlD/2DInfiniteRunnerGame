@@ -4,7 +4,6 @@
  */
 package irgame.object;
 
-import irgame.Game;
 import irgame.graphics.SpriteSheet;
 import java.awt.Graphics;
 import java.awt.Image;
