@@ -15,21 +15,18 @@ import javax.imageio.ImageIO;
  * @author Daniel
  */
 public class SpriteSheet {
-
     private String path;
     public BufferedImage img;
     
-    public SpriteSheet(String path/*, int size*/){
+    public SpriteSheet(String path){ //The cunstructor wich sets the path of the specified image file and then loads it.
         this.path = path;
-        load();
+        load(); //Explained down below
     }
     
-    private void load(){
+    private void load(){    //Loads the specified image.
         try {
-            //img = ImageIO.read(SpriteSheet.class.getResource(path));
             img = ImageIO.read(getClass().getResource(path));
         } catch (IOException ex) {
-            System.out.println(getClass().getResource(path));
             Logger.getLogger(SpriteSheet.class.getName()).log(Level.SEVERE, null, ex);
         }
         

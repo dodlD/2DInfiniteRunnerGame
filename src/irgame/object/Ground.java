@@ -15,13 +15,10 @@ import java.awt.Rectangle;
  * @author lkpit11dljo
  */
 public class Ground{
-    //private static double velocity;
-    //private static double friction/*Koeffisient*/; //Friction koeffisient? for the current underlag
     public static final int SPRITE_SIZE = 32;
     public static final int WIDTH = SPRITE_SIZE;
     public static final int HEIGHT = SPRITE_SIZE;
-    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/moon_block_sprite_sheet.png");
-    //public static Image sprite;
+    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/moon_block_sprite_sheet.png"); //Loads the ground sprite sheet.
     public static Image sprite[] = new Image[5];
     public int spriteXPos;
     public int spriteYPos;
@@ -31,11 +28,11 @@ public class Ground{
     public Rectangle hitBox;
     public static final int yCoordinates[] = new int[Game.ground.length];
     
-    public Ground(int spriteXPos, int spriteYPos, int startXPos, int startYPos){
+    public Ground(int spriteXPos, int spriteYPos, int startXPos, int startYPos){    //The constructor that sets the starting position and sprite for the ground.   
         this.spriteXPos = spriteXPos * WIDTH;
         this.spriteYPos = spriteYPos * HEIGHT;
         for (int i = 0; i < sprite.length; i++){
-            sprite[i] = sheet.img.getSubimage(i*WIDTH, this.spriteYPos, WIDTH, HEIGHT);
+            sprite[i] = sheet.img.getSubimage(i*WIDTH, this.spriteYPos, WIDTH, HEIGHT); 
         }
         
         xPos = startXPos * WIDTH;
@@ -43,15 +40,15 @@ public class Ground{
         hitBox = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
     }
     
-    public static void render(Graphics g, Ground[] grnd, Ground[] grndF){    //Renders the ground
-        for (int i = 0; i < grnd.length; i++){    //Draws every block at their given position
+    public static void render(Graphics g, Ground[] grnd, Ground[] grndFill){    //Takes care of the rendering of the ground.
+        for (int i = 0; i < grnd.length; i++){
             g.drawImage(grnd[i].sprite[grnd[i].spriteXPos/32], grnd[i].xPos, grnd[i].yPos, null);
-            g.drawImage(grndF[i].sprite[4], grndF[i].xPos, grndF[i].yPos, null);
-            g.drawImage(grndF[21+i].sprite[4], grndF[21+i].xPos, grndF[21+i].yPos, null);
+            g.drawImage(grndFill[i].sprite[4], grndFill[i].xPos, grndFill[i].yPos, null);
+            g.drawImage(grndFill[21+i].sprite[4], grndFill[21+i].xPos, grndFill[21+i].yPos, null);
         }      
     }
     
-    public static void setSprite(Ground[] grnd){
+    public static void setSprite(Ground[] grnd){    //Sets the sprite for the object.
         for (int i = 0; i < grnd.length; i++){
             if (i == 0){
                 if (yCoordinates[i] <= yCoordinates[20]){
@@ -99,7 +96,7 @@ public class Ground{
         }
     }
     
-    public static void rePos(Ground[] grnd, Ground[] grndF, int i){
+    public static void rePosY(int i){    //Repositions the y-coordinate of the object.
         if (i == 0){
             setYPos(19, 20, i);
         }else if (i == 1){
@@ -109,7 +106,7 @@ public class Ground{
         }
     } 
     
-    private static void setYPos(int prevG2, int prevG, int curG){
+    private static void setYPos(int prevG2, int prevG, int curG){   //Sets the new y-coordinate of the object.
         switch(yCoordinates[prevG]){
             case 1:
                 if(yCoordinates[prevG2] == 2){
@@ -140,16 +137,15 @@ public class Ground{
         }
     }
     
-    public static boolean newLvl(int time, int level){
+    public static boolean newLvl(int time, int level){  //Checks if it is possible to increase the level and returns true if it is.
         boolean nL = false;
-        System.out.println(time);
         if(time == level*30 || level != 1 && time == 0){
             nL = true;    
         }
         return nL;
     }
     
-    public static boolean outOfArea(Ground[] grnd, int i){
+    public static boolean outOfArea(Ground[] grnd, int i){  //Checks if the ground is out of the windowarea and retruns true if it is.
         boolean oOA = false;
         if(grnd[i].xPos <= -grnd[i].WIDTH){
             oOA = true;    

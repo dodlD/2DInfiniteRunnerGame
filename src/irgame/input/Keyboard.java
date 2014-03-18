@@ -12,25 +12,23 @@ import java.awt.event.KeyListener;
 public class Keyboard implements KeyListener{
   
     private boolean[] keys = new boolean[120];
-    public boolean up, down, left, right, r;
+    public boolean up, left, right, r;
     
-    public void update(){
+    public void update(){   //Sets the key variables to true or false depending on if the keys arraylist return true.
         up = keys[KeyEvent.VK_UP] || keys[KeyEvent.VK_W];
-        down = keys[KeyEvent.VK_DOWN] || keys[KeyEvent.VK_S];
         left = keys[KeyEvent.VK_LEFT] || keys[KeyEvent.VK_A];
         right = keys[KeyEvent.VK_RIGHT] || keys[KeyEvent.VK_D];
         r = keys[KeyEvent.VK_R];
     }
     
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(KeyEvent e) {    //Checks if a key is pressed and if so, stores true at the position of the key code value in the keys array
         keys[e.getKeyCode()] = true;
     }
 
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e) {   //Checks if a key is pressed and if so, stores false at the position of the key code value in the keys array
         keys[e.getKeyCode()] = false;
     }
     
-    public void keyTyped(KeyEvent e) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void keyTyped(KeyEvent e) {    
     }
 }

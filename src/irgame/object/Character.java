@@ -18,28 +18,28 @@ import java.util.ArrayList;
 public class Character{
     private static final int WIDTH = 47;
     private static final int HEIGHT = 62;
-    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png");
-    private Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);
+    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png"); //Loads the character sprite sheet.
+    private Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);  //Sets the starting sprite for the charater.
     private final int START_X_POS = Game.WIDTH / 2 - Ground.WIDTH;
     private final int START_Y_POS = Game.HEIGHT / 2 - HEIGHT;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
-    public int HORIZ_VEL = 0;   //The horizontal velocity of the charater
-    public final int JUMP_FORCE = 4; //The force of the characters jump measured in pixels
+    public int HORIZ_VEL = 0;   //The horizontal velocity of the charater.
+    public final int JUMP_FORCE = 4; //The force of the characters jump.
     public final int JUMP_HEIGHT = HEIGHT + HEIGHT/(HEIGHT/10);
     public String state = "falling";
     public Rectangle headHitBox = new Rectangle(xPos + 11, yPos, WIDTH-8, 45);
     public Rectangle bodyHitBox = new Rectangle(xPos + 12, yPos+45, 35, 21);
 
-    public Character(){
+    public Character(){ //The constructor that creates the character.
     }
     
-    public boolean outOfArea(){ //Checks if the character is out of the windowarea.
+    public boolean outOfArea(){ //Checks if the character is out of the windowarea and retruns true if it is.
         boolean oOA = false;
-        if (xPos + WIDTH >= Game.WIDTH){    //Retruns true if it is.
+        if (xPos + WIDTH >= Game.WIDTH){    
             oOA = true;  
         }
-        return oOA;
+        return oOA; 
     }
     
     public void  render(Graphics g){    //Takes care of the rendering of the character.
@@ -75,7 +75,7 @@ public class Character{
         }
     }
     
-    public void collision(Ground[] ground){ //Takes care of collisions between the character and the ground.
+    public void collision(Ground[] ground, int gravity){ //Takes care of collisions between the character and the ground.
         for (int i = 0; i < ground.length; i++){
             switch (state){
                 case "walking":
@@ -84,10 +84,10 @@ public class Character{
                             if (yPos + HEIGHT > ground[i].yPos + 4){
                                 xPos -= ground[i].HORIZ_VEL + HORIZ_VEL;
                             }else {
-                                yPos -= Game.gravity;
+                                yPos -= gravity;
                             }
                         }else {
-                            yPos -= Game.gravity;
+                            yPos -= gravity;
                         }
                         if (xPos > ground[i].xPos + ground[i].WIDTH - 13){
                             if (i == 20){
@@ -118,7 +118,7 @@ public class Character{
                 case "falling":
                     if (headHitBox.intersects(ground[i].hitBox) || bodyHitBox.intersects(ground[i].hitBox)){
                         if (yPos + HEIGHT > ground[i].yPos && yPos + HEIGHT < ground[i].yPos + 5){
-                                yPos -= Game.gravity;
+                                yPos -= gravity;
                                 state = "walking";
                         }else if ((Game.HEIGHT - ground[i].yPos) / 32  > 1){
                             xPos -= ground[i].HORIZ_VEL + HORIZ_VEL;    
@@ -133,13 +133,13 @@ public class Character{
         }
     }
     
-    public boolean dead(ArrayList<Obstacle> o){ //Checks if the character is dead.
+    public boolean dead(ArrayList<Obstacle> o){ //Checks if the character collides with a obstacle and returns true if it does.
         boolean dead = false;
         for (int i = 0; i < o.size(); i++){
             if(headHitBox.intersects(o.get(i).hitBox) || bodyHitBox.intersects(o.get(i).hitBox)){
                 dead = true;
             }
         }
-        return dead;
+        return dead;    
     }
 }

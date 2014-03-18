@@ -18,35 +18,35 @@ import java.util.ArrayList;
 public class Obstacle{
     public static final int WIDTH = 15;
     public static final int HEIGHT = 14;
-    public final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/obstacles_sprite_sheet.png");
+    public final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/obstacles_sprite_sheet.png");    //Loads the obstacle sprite sheet.
+    public final Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT); //Sets the sprite for the obstacle.
     public int xPos;
     public int yPos;
-    public final Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT); //public final Image BODY[] = new Image[5];
     public Rectangle hitBox;
     
-    public Obstacle(int startXPos, int startYPos){     
+    public Obstacle(int startXPos, int startYPos){     //The constructor that sets the starting position for the obstacle.
         xPos = startXPos;
         yPos = startYPos - HEIGHT;
         hitBox = new Rectangle(xPos, yPos, WIDTH, HEIGHT);
     }
     
-    public static void render(Graphics g, ArrayList<Obstacle> o){
-       for (int i = 0; i < o.size(); i++){
-            g.drawImage(o.get(i).sprite, o.get(i).xPos, o.get(i).yPos, null);
+    public static void render(Graphics g, ArrayList<Obstacle> obst){    //Takes care of the rendering of the obstacle.
+       for (int i = 0; i < obst.size(); i++){
+            g.drawImage(obst.get(i).sprite, obst.get(i).xPos, obst.get(i).yPos, null);
         } 
     }
     
-    public static boolean newObstacle(ArrayList<Obstacle> o, Ground[] grnd, int level, int r, int i){
+    public static boolean newObstacle(ArrayList<Obstacle> obst, Ground[] grnd, int level, int r, int i){ //Checks if it is possible to create a new obstacle and returns true if it is.
         boolean nO = false;
-        if (r > 10-level && o.get(o.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
+        if (r > 10-level && obst.get(obst.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
             nO = true;
         }
         return nO;
     }
     
-    public static boolean delObstacle(ArrayList<Obstacle> o, Ground[] grnd, int x){
+    public static boolean delObstacle(ArrayList<Obstacle> obst, Ground[] grnd, int x){  //Checks if it is possible to delete the obstacle and returns true if it is.
         boolean dO = false;
-        if (o.get(x).xPos <= -o.get(x).WIDTH && o.size() > 1){
+        if (obst.get(x).xPos <= -obst.get(x).WIDTH && obst.size() > 1){
             dO = true;
         }
         return dO;

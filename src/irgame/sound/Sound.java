@@ -22,11 +22,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * @author Daniel
  */
 public class Sound {
+    private String path;
     private Clip clip;
-    public Sound(String path) {
-        // specify the sound to play
-        // (assuming the sound can be played by the audio system)
-        // from a wave File
+    
+    public Sound(String path) { //The constructor that loads the specified sound file.
+        this.path = path;
+        load();
+        
+    }
+    
+    private void load(){
         try {
             File file = new File(getClass().getResource(path).toURI());
             if (file.exists()) {
@@ -35,32 +40,28 @@ public class Sound {
                 clip = AudioSystem.getClip();
                 clip.open(sound);
             }
-            else {
-                throw new RuntimeException("Sound: file not found: " + path);
-            }
         }catch (UnsupportedAudioFileException e) {
             e.printStackTrace();
-            throw new RuntimeException("Sound: Unsupported Audio File: " + e);
         }catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Sound: Input/Output Error: " + e);
         }catch (LineUnavailableException e) {
             e.printStackTrace();
-            throw new RuntimeException("Sound: Line Unavailable Exception Error: " + e);
         }catch (URISyntaxException ex) {
             Logger.getLogger(Sound.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // play, stop, loop the sound clip
-        }
-        public void play(){
-            clip.setFramePosition(0);  // Must always rewind!
-            clip.start();
-        }
-        public void loop(){
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        }
-        public void stop(){
-            clip.stop();
-        }
     }
+    
+    public void play(){ //Plays the sound clip.
+        clip.setFramePosition(0);  // Must always rewind!
+        clip.start();
+    }
+    
+    public void loop(){ //Loops the sound clip.
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+    
+    public void stop(){ //Stops the sound clip.
+        clip.stop();
+    }
+}
