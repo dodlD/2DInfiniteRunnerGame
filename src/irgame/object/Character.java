@@ -16,9 +16,9 @@ import java.util.ArrayList;
  * @author lkpit11dljo
  */
 public class Character{
-    private static final int WIDTH = 47;
-    private static final int HEIGHT = 62;
-    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png"); //Loads the character sprite sheet.
+    private final int WIDTH = 47;
+    private final int HEIGHT = 62;
+    private final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png"); //Loads the character sprite sheet.
     private Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);  //Sets the starting sprite for the charater.
     private final int START_X_POS = Game.WIDTH / 2 - Ground.WIDTH;
     private final int START_Y_POS = Game.HEIGHT / 2 - HEIGHT;

@@ -52,25 +52,25 @@ public class Game extends Canvas implements Runnable {
     
     private FileWriter fw;
     
-    private static final int GRAVITY = 4;
-    private static int jumpCount = 0;
-    private static int level = 1;
+    private final int GRAVITY = 4;
+    private int jumpCount = 0;
+    private int level = 1;
     private boolean newHighScore = false;
     private String highScore;
     
     //Objects
     public static final Ground[] GROUND = new Ground[WIDTH / Ground.WIDTH + 1]; //The ground the charater is running on.
     private static final Ground[] GROUND_FILL = new Ground[(WIDTH / Ground.WIDTH + 1) * 2];  //Used to fill the space below the actual ground.
-    private static ArrayList<Obstacle> obstacle;
+    private ArrayList<Obstacle> obstacle;
     private static Character chaR;
     
     //Sound
-    private static Sound music;
-    private static Sound jump;
-    private static Sound die;
-    private static Sound dead;
+    private Sound music;
+    private Sound jump;
+    private Sound die;
+    private Sound dead;
     
-    private static BufferedImage bG, gameOverImg;
+    private BufferedImage bG, gameOverImg;
     
     private String elapsedMilliSeconds = "1";
     private String elapsedSeconds = "1";

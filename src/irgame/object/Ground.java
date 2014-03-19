@@ -18,8 +18,8 @@ public class Ground{
     public static final int SPRITE_SIZE = 32;
     public static final int WIDTH = SPRITE_SIZE;
     public static final int HEIGHT = SPRITE_SIZE;
-    private static final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/moon_block_sprite_sheet.png"); //Loads the ground sprite sheet.
-    public static Image sprite[] = new Image[5];
+    private final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/moon_block_sprite_sheet.png"); //Loads the ground sprite sheet.
+    public Image sprite[] = new Image[5];
     public int spriteXPos;
     public int spriteYPos;
     public int xPos;
