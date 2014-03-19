@@ -112,7 +112,7 @@ public class Ground{
     private static void setYPos(int prevG2, int prevG, int curG){   //Sets the new y-coordinate of the object.
         switch(Y_COORDINATES[prevG]){
             case 1:
-                if(Y_COORDINATES[prevG2] == 2){
+                if (Y_COORDINATES[prevG2] == 2){
                     Y_COORDINATES[curG] = 1; 
                 }else {
                     Y_COORDINATES[curG] = (int)(Math.random() * 2 + 1);
@@ -121,7 +121,7 @@ public class Ground{
                 break;
                 
             case 2:
-                if(Y_COORDINATES[prevG2] != 2){
+                if (Y_COORDINATES[prevG2] != 2){
                     Y_COORDINATES[curG] = 2; 
                 }else {
                     Y_COORDINATES[curG] = (int)(Math.random() * 3 + 1);
@@ -130,7 +130,7 @@ public class Ground{
                 break;
                 
             case 3:
-                if(Y_COORDINATES[prevG2] != 3){
+                if (Y_COORDINATES[prevG2] != 3){
                     Y_COORDINATES[curG] = 3;   
                 }else {
                     Y_COORDINATES[curG] = (int)(Math.random() * 2 + 2);
@@ -142,15 +142,15 @@ public class Ground{
     
     public static boolean newLvl(int time, int level){  //Checks if it is possible to increase the level and returns true if it is.
         boolean nL = false;
-        if(time == level*30 || level != 1 && time == 0){
-            nL = true;    
+        if (time == level*30 || time == level*29.5){
+            nL = true;
         }
         return nL;
     }
     
     public static boolean outOfArea(Ground[] grnd, int i){  //Checks if the ground is out of the windowarea and retruns true if it is.
         boolean oOA = false;
-        if(grnd[i].xPos <= -grnd[i].WIDTH){
+        if (grnd[i].xPos <= -grnd[i].WIDTH){
             oOA = true;    
         }
         return oOA;
