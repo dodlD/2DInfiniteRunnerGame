@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
  */
 public class Keyboard implements KeyListener{
   
-    private boolean[] keys = new boolean[65536];    //Maximum value of the character array.
+    private boolean[] keys = new boolean[65536];    //65536 = Maximum value of the character array.
     public boolean up, left, right, r;
     
     public void update(){   //Sets the key variables to true or false depending on if the keys arraylist return true.
