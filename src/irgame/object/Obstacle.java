@@ -16,9 +16,11 @@ import java.util.ArrayList;
  */
 public class Obstacle{
     public static final int WIDTH = 15;
-    public static final int HEIGHT = 14;
-    public final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/obstacles_sprite_sheet.png");    //Loads the obstacle sprite sheet.
-    public final Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT); //Sets the sprite for the obstacle.
+    public static final int HEIGHT = 14; 
+    
+    private final SpriteSheet SHEET = new SpriteSheet("/irgame/res/textures/obstacles_sprite_sheet.png");    //Loads the obstacle sprite sheet.
+    private final Image SPRITE = SHEET.img.getSubimage(0, 0, WIDTH, HEIGHT); //Sets the sprite for the obstacle.
+    
     public int xPos;
     public int yPos;
     public Rectangle hitBox;
@@ -31,7 +33,7 @@ public class Obstacle{
     
     public static void render(Graphics g, ArrayList<Obstacle> obst){    //Takes care of the rendering of the obstacle.
        for (int i = 0; i < obst.size(); i++){
-            g.drawImage(obst.get(i).sprite, obst.get(i).xPos, obst.get(i).yPos, null);
+            g.drawImage(obst.get(i).SPRITE, obst.get(i).xPos, obst.get(i).yPos, null);
         } 
     }
     

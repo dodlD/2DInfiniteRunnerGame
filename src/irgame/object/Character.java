@@ -6,6 +6,7 @@ package irgame.object;
 
 import irgame.Game;
 import irgame.graphics.SpriteSheet;
+import irgame.sound.Sound;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -18,19 +19,25 @@ import java.util.ArrayList;
 public class Character{
     private final int WIDTH = 47;
     private final int HEIGHT = 62;
-    private final SpriteSheet sheet = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png"); //Loads the character sprite sheet.
-    private Image sprite = sheet.img.getSubimage(0, 0, WIDTH, HEIGHT);  //Sets the starting sprite for the charater.
+    
+    private final SpriteSheet SHEET = new SpriteSheet("/irgame/res/textures/char_sprite_sheet.png"); //Loads the character sprite sheet.
+    private Image sprite = SHEET.img.getSubimage(0, 0, WIDTH, HEIGHT);  //Sets the starting sprite for the charater.
+    
     private final int START_X_POS = Game.WIDTH / 2 - Ground.WIDTH;
     private final int START_Y_POS = Game.HEIGHT / 2 - HEIGHT;
     public int xPos = START_X_POS;
     public int yPos = START_Y_POS;
-    public int HORIZ_VEL = 0;   //The horizontal velocity of the charater.
-    public final int JUMP_FORCE = 4; //The force of the characters jump.
-    public final int JUMP_HEIGHT = HEIGHT + HEIGHT/(HEIGHT/10);
-    public String state = "falling";
     public Rectangle headHitBox = new Rectangle(xPos + 11, yPos, WIDTH-8, 45);
     public Rectangle bodyHitBox = new Rectangle(xPos + 12, yPos+45, 35, 21);
-
+    public String state = "falling";
+    
+    public int horizVel = 0;   //The horizontal velocity of the charater.
+    public final int JUMP_FORCE = 4; //The force of the characters jump.
+    public final int JUMP_HEIGHT = HEIGHT + HEIGHT/(HEIGHT/10);
+    
+    public final Sound JUMP = new Sound("/irgame/res/sounds/jump.wav");    //Loads the jump sound effect.
+    public final Sound DIE = new Sound("/irgame/res/sounds/die.wav");  //Loads the die sound effect.
+    
     public Character(){ //The constructor that creates the character.
     }
     
@@ -42,7 +49,7 @@ public class Character{
         return oOA; 
     }
     
-    public void  render(Graphics g){    //Takes care of the rendering of the character.
+    public void render(Graphics g){    //Takes care of the rendering of the character.
         g.drawImage(sprite, xPos, yPos, null);
     }
     
@@ -50,26 +57,26 @@ public class Character{
         switch (state){ //Changes the characters sprite depending on its state and/or updates, which is used to decide when to switch sprite and what sprite to use for the animation
             case "walking":
                 if (updates == 5 || updates == 25 || updates == 45){
-                    sprite = sheet.img.getSubimage(0*WIDTH, 0, WIDTH, HEIGHT);
+                    sprite = SHEET.img.getSubimage(0*WIDTH, 0, WIDTH, HEIGHT);
                     bodyHitBox.setBounds(xPos + 11, yPos + 45, 36, 17);
                 }else if (updates == 10 || updates == 30 || updates == 50){
-                    sprite = sheet.img.getSubimage(1*WIDTH, 0, WIDTH, HEIGHT);
+                    sprite = SHEET.img.getSubimage(1*WIDTH, 0, WIDTH, HEIGHT);
                     bodyHitBox.setBounds(xPos + 8, yPos + 45, 37, 17);
  
                 }else if (updates == 15 || updates == 35 || updates == 55){
-                    sprite = sheet.img.getSubimage(0*WIDTH, 0, WIDTH, HEIGHT);
+                    sprite = SHEET.img.getSubimage(0*WIDTH, 0, WIDTH, HEIGHT);
                     bodyHitBox.setBounds(xPos + 11, yPos + 45, 36, 17);
                 }else if (updates == 20 || updates == 40 || updates == 60){
-                    sprite = sheet.img.getSubimage(2*WIDTH, 0, WIDTH, HEIGHT);
+                    sprite = SHEET.img.getSubimage(2*WIDTH, 0, WIDTH, HEIGHT);
                     bodyHitBox.setBounds(xPos + 5, yPos + 45, 37, 17);
                 }
                 break;
             case "jumping":
-                sprite = sheet.img.getSubimage(3*WIDTH, 0, WIDTH, HEIGHT);
+                sprite = SHEET.img.getSubimage(3*WIDTH, 0, WIDTH, HEIGHT);
                 bodyHitBox.setBounds(xPos + 12, yPos + 45, 35, 21);
                 break;
             case "falling":
-                sprite = sheet.img.getSubimage(3*WIDTH, 0, WIDTH, HEIGHT);
+                sprite = SHEET.img.getSubimage(3*WIDTH, 0, WIDTH, HEIGHT);
                 bodyHitBox.setBounds(xPos + 12, yPos + 45, 35, 21);
                 break;
         }
@@ -82,7 +89,7 @@ public class Character{
                     if (headHitBox.intersects(ground[i].hitBox) || bodyHitBox.intersects(ground[i].hitBox)){
                         if ((Game.HEIGHT - ground[i].yPos) / 32  > 1){
                             if (yPos + HEIGHT > ground[i].yPos + 4){
-                                xPos -= ground[i].HORIZ_VEL + HORIZ_VEL;
+                                xPos -= ground[i].HORIZ_VEL + horizVel;
                             }else {
                                 yPos -= gravity;
                             }
@@ -107,7 +114,7 @@ public class Character{
                 case "jumping":
                     if (headHitBox.intersects(ground[i].hitBox) || bodyHitBox.intersects(ground[i].hitBox)){
                         if ((Game.HEIGHT - ground[i].yPos) / 32  > 1){
-                            xPos -= ground[i].HORIZ_VEL + HORIZ_VEL;
+                            xPos -= ground[i].HORIZ_VEL + horizVel;
                         }else {
                             state = "walking";
                         }  
@@ -121,7 +128,7 @@ public class Character{
                                 yPos -= gravity;
                                 state = "walking";
                         }else if ((Game.HEIGHT - ground[i].yPos) / 32  > 1){
-                            xPos -= ground[i].HORIZ_VEL + HORIZ_VEL;    
+                            xPos -= ground[i].HORIZ_VEL + horizVel;    
                         }else {
                             state = "walking";
                         }

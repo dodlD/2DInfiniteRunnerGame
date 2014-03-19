@@ -65,11 +65,9 @@ public class Game extends Canvas implements Runnable {
     private static Character chaR;
     
     //Sound
-    private Sound music;
-    private Sound jump;
-    private Sound die;
-    private Sound dead;
+    private Sound music, dead;
     
+    //Images
     private BufferedImage bG, gameOverImg;
     
     private String elapsedMilliSeconds = "1";
@@ -98,7 +96,7 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(key);
     }
     
-    public synchronized void start() {  //Starts the game.
+    private synchronized void start() {  //Starts the game.
         running = true;
         thread = new Thread(this, "Display");
         thread.start();
@@ -116,14 +114,10 @@ public class Game extends Canvas implements Runnable {
             
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        jump = new Sound("/irgame/res/sounds/jump.wav");    //Loads the jump sound effect.
-        die = new Sound("/irgame/res/sounds/die.wav");  //Loads the die sound effect.
-        
+        }       
     }
     
-    public synchronized void stop() {   //Stops the game.
+    private synchronized void stop() {   //Stops the game.
         running = false;
         try {
             thread.join();
@@ -139,7 +133,6 @@ public class Game extends Canvas implements Runnable {
             long now = System.nanoTime();
             delta += (now - lastTime) / NS;
             lastTime = now;
-            
             
             long currTime = System.currentTimeMillis();
             long deltaTimeMS = currTime - startTimeMS;
@@ -202,14 +195,13 @@ public class Game extends Canvas implements Runnable {
                     running = true;
                     initialize();   //Explained further down.
                 }
-                
                 render();
             }
         }
         
     }
     
-    public void update(){   //Handles the locical parts of the game.
+    private void update(){   //Handles the locical parts of the game.
         key.update();   //Explained in the Keyboard class
         
         //Takes care of the jumping process.
@@ -217,7 +209,7 @@ public class Game extends Canvas implements Runnable {
             if (chaR.state.equals("walking") || chaR.state.equals("jumping")){  //Starts or continues the jump process depending on if the character is walking or jumping.
                 if (jumpCount < chaR.JUMP_HEIGHT / chaR.JUMP_FORCE){            //
                     if(jumpCount == 0){ 
-                        jump.play();
+                        chaR.JUMP.play();
                     }
                     chaR.yPos -= chaR.JUMP_FORCE + GRAVITY;
                     chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
@@ -236,21 +228,21 @@ public class Game extends Canvas implements Runnable {
         //Takes care of the characters movement back and forth.
         if (key.left){
             chaR.xPos -= GROUND[0].HORIZ_VEL;
-            chaR.HORIZ_VEL = -2;
+            chaR.horizVel = -2;
             chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
             chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
         }else if (key.right){
             chaR.xPos += GROUND[0].HORIZ_VEL; 
-            chaR.HORIZ_VEL = 2;
+            chaR.horizVel = 2;
             chaR.headHitBox.setLocation(chaR.xPos + 11, chaR.yPos);
             chaR.bodyHitBox.setLocation(chaR.xPos + 11, chaR.yPos + 45);
         }else{
-            chaR.HORIZ_VEL = 0;
+            chaR.horizVel = 0;
         }
         
         //Decides what will happen when the character is outside the grapichal area or dead.
         if (chaR.xPos < 0 || chaR.dead(obstacle)){
-            die.play();
+            chaR.DIE.play();
             music.stop();
             dead.loop();
             
@@ -308,7 +300,7 @@ public class Game extends Canvas implements Runnable {
             running = false;    //Stops the game from running.
         }else {
             if (chaR.outOfArea()){  //Prevents the player from running out of the windowarea.
-                chaR.xPos -= Game.chaR.HORIZ_VEL;;
+                chaR.xPos -= Game.chaR.horizVel;;
             }
             
             chaR.yPos += GRAVITY;
@@ -331,15 +323,15 @@ public class Game extends Canvas implements Runnable {
                     Ground.rePosY(i);
 
                     //The ground the character is running on.
-                    GROUND[i].yPos = Game.HEIGHT - GROUND[i].HEIGHT * Ground.yCoordinates[i];
+                    GROUND[i].yPos = Game.HEIGHT - GROUND[i].HEIGHT * Ground.Y_COORDINATES[i];
                     GROUND[i].xPos += getWidth() + GROUND[i].WIDTH;
                     GROUND[i].hitBox.setLocation(GROUND[i].xPos, GROUND[i].yPos);
 
                     //The filling ground .
-                    GROUND_FILL[i].yPos = Game.HEIGHT - GROUND_FILL[i].HEIGHT * (Ground.yCoordinates[i]-1);
+                    GROUND_FILL[i].yPos = Game.HEIGHT - GROUND_FILL[i].HEIGHT * (Ground.Y_COORDINATES[i]-1);
                     GROUND_FILL[i].xPos += getWidth() + GROUND_FILL[i].WIDTH;
                     GROUND_FILL[i].hitBox.setLocation(GROUND_FILL[i].xPos, GROUND_FILL[i].yPos);
-                    GROUND_FILL[21+i].yPos = Game.HEIGHT - GROUND_FILL[21+i].HEIGHT * (Ground.yCoordinates[i]-2);
+                    GROUND_FILL[21+i].yPos = Game.HEIGHT - GROUND_FILL[21+i].HEIGHT * (Ground.Y_COORDINATES[i]-2);
                     GROUND_FILL[21+i].xPos += getWidth() + GROUND_FILL[21+i].WIDTH;
                     GROUND_FILL[21+i].hitBox.setLocation(GROUND_FILL[21+i].xPos, GROUND_FILL[21+i].yPos);
                     
@@ -383,7 +375,7 @@ public class Game extends Canvas implements Runnable {
         }
     }
     
-    public void render(){   //Handles the rendering of objects and images.
+    private void render(){   //Handles the rendering of objects and images.
         BufferStrategy bs = getBufferStrategy();
         if (bs == null) {
             createBufferStrategy(3);
@@ -446,7 +438,7 @@ public class Game extends Canvas implements Runnable {
         game.start();
     }
     
-    public void initialize(){   //
+    private void initialize(){   //
         lastTime = System.nanoTime();
         timer = System.currentTimeMillis();
         delta = 0;
@@ -460,10 +452,10 @@ public class Game extends Canvas implements Runnable {
         
         //Creates and sets the start coordinates for the ground.
         for (int i = 0; i < GROUND.length; i++){
-            Ground.yCoordinates[i] = 1;
-            GROUND[i] = new Ground(0, 0, i, Ground.yCoordinates[i]);
-            GROUND_FILL[i] = new Ground(4, 0, i, Ground.yCoordinates[i]-1);
-            GROUND_FILL[21+i] = new Ground(4, 0, i, Ground.yCoordinates[i]-2);
+            Ground.Y_COORDINATES[i] = 1;
+            GROUND[i] = new Ground(0, 0, i, Ground.Y_COORDINATES[i]);
+            GROUND_FILL[i] = new Ground(4, 0, i, Ground.Y_COORDINATES[i]-1);
+            GROUND_FILL[21+i] = new Ground(4, 0, i, Ground.Y_COORDINATES[i]-2);
         }
         
         //Creates the first obstacle.
