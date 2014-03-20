@@ -140,9 +140,9 @@ public class Ground{
         }
     }
     
-    public static boolean newLvl(int time, int level){  //Checks if it is possible to increase the level and returns true if it is.
+    public static boolean newLvl(int time, int level, int i){  //Checks if it is possible to increase the level and returns true if it is.
         boolean nL = false;
-        if (time == level*30 || time == level*29.5){
+        if (i <= 20 && time == level*30 || time == level*29.5){
             nL = true;
         }
         return nL;

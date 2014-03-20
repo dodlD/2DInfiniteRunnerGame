@@ -310,7 +310,7 @@ public class Game extends Canvas implements Runnable {
             
             //The movement of the ground and creation of obstacles.
             for (int i = 0; i < GROUND.length; i++){
-                if(Ground.newLvl(Integer.parseInt(elapsedSeconds), level)){ //Increases the level of the game.
+                if (Ground.newLvl(Integer.parseInt(elapsedSeconds), level, i)){ //Increases the level of the game.
                     GROUND[i].HORIZ_VEL++;
                     GROUND_FILL[i].HORIZ_VEL++;
                     GROUND_FILL[21+i].HORIZ_VEL++;

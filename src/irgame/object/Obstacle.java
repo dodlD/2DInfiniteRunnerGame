@@ -39,7 +39,7 @@ public class Obstacle{
     
     public static boolean newObstacle(ArrayList<Obstacle> obst, Ground[] grnd, int level, int r, int i){ //Checks if it is possible to create a new obstacle and returns true if it is.
         boolean nO = false;
-        if (r > 10-level && obst.get(obst.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
+        if (r > 10-level*2 && obst.get(obst.size()-1).xPos + grnd[i].WIDTH*4 < grnd[i].xPos){
             nO = true;
         }
         return nO;
